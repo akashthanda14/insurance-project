@@ -15,6 +15,10 @@ import CondoInsurance from './pages/CondoInsurance';
 import TravelInsurance from './pages/TravelInsurance';
 import LifeInsurance from './pages/LifeInsurance';
 import InsuranceSelection from './pages/Quote';
+import QuoteForm from './components/QuoteForm';
+import { Plane } from 'lucide-react';
+import Plans from './pages/Plans';
+import ApplicantDetailsForm from './components/ApplicantDetailsForm';
 
 
 function App() {
@@ -37,6 +41,10 @@ function App() {
         <Route path="/insurance/travel" element={<TravelInsurance />} />
         <Route path="/insurance/life" element={<LifeInsurance />} />
         <Route path="/InsuranceSelection" element={<InsuranceSelection/>}/>
+        <Route path="/plans" element={<Plans/>} />
+        <Route path="/Quoteform" element={<QuoteForm/>}/>
+        <Route path="/Applicantform" element={<ApplicantDetailsForm/>}/>
+
 
           </Routes>
         </main>

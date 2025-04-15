@@ -27,7 +27,7 @@ const Home = () => {
           <h2 className='md:text-4xl text-2xl lato-thin' >Matters Most.</h2>
           <div>
           <Link
-            to="/InsuranceSelection"
+            to="/Quoteform"
             className="inline-flex uppercase lato-bold  items-center bg-[#ff735c] text-white px-12 py-4  text-xl font-bold hover:bg-orange-600 transition-colors"
           >
             Start Your Quote
