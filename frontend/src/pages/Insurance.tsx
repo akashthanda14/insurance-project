@@ -17,12 +17,13 @@ import {
 } from 'lucide-react';
 
 // Import images from assets
-import autoImg from '../assets/auto.jpg';
-import homeImg from '../assets/home.jpg';
-import businessImg from '../assets/bussiness.jpg';
-import lifeImg from '../assets/life.jpg';
-import travelImg from '../assets/travel.jpg';
-import condoImg from '../assets/condo.jpg';
+const autoImg = "https://res.cloudinary.com/dmt4dj8ft/image/upload/v1751905973/auto_onfx7d.jpg";
+const homeImg = "https://res.cloudinary.com/dmt4dj8ft/image/upload/v1751905965/home_gfm5zn.jpg";
+const businessImg = "https://res.cloudinary.com/dmt4dj8ft/image/upload/v1751905980/bussiness_elklgn.jpg";
+const lifeImg = "https://res.cloudinary.com/dmt4dj8ft/image/upload/v1751905993/life_vwbqws.jpg";
+const travelImg = "https://res.cloudinary.com/dmt4dj8ft/image/upload/v1751905999/travel_hryhtw.jpg";
+const condoImg = "https://res.cloudinary.com/dmt4dj8ft/image/upload/v1751905985/condo_t8hmss.jpg";
+
 
 interface InsuranceType {
   id: string;
