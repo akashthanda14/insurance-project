@@ -1,6 +1,20 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Calendar, Clock, Users, Globe, Shield, DollarSign } from "lucide-react";
+import { 
+  Calculator, 
+  Calendar, 
+  Clock, 
+  Users, 
+  Globe, 
+  Shield, 
+  DollarSign,
+  ChevronDown,
+  Check,
+  X,
+  Filter,
+  Eye,
+  ArrowRight
+} from "lucide-react";
 import type { PremiumOption } from "../types";
 
 const API_URL = "https://devweb.desttravel.com/api/visitorquote/premiumoptions";
@@ -14,11 +28,31 @@ const defaultParams = {
   language: "EN",
 };
 
+interface DeductibleOption {
+  label: string;
+  value: keyof PremiumOption;
+  amount: string;
+  popular?: boolean;
+}
+
+const deductibleOptions: DeductibleOption[] = [
+  { label: "$0", value: "Deductible0", amount: "$0", popular: true },
+  { label: "$250", value: "Deductible250", amount: "$250" },
+  { label: "$500", value: "Deductible500", amount: "$500" },
+  { label: "$1,000", value: "Deductible1000", amount: "$1,000" },
+  { label: "$2,500", value: "Deductible2500", amount: "$2,500" },
+  { label: "$5,000", value: "Deductible5000", amount: "$5,000" },
+  { label: "$10,000", value: "Deductible10000", amount: "$10,000" },
+];
+
 export const PremiumOptions: React.FC = () => {
   const [params, setParams] = useState(defaultParams);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<PremiumOption[] | null>(null);
+  const [selectedDeductible, setSelectedDeductible] = useState<keyof PremiumOption>("Deductible0");
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const target = e.target as HTMLInputElement | HTMLSelectElement;
@@ -54,35 +88,62 @@ export const PremiumOptions: React.FC = () => {
     }
   };
 
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+    }).format(amount);
+  };
+
+  const getBestValue = (options: PremiumOption[]) => {
+    if (!options.length) return null;
+    return options.reduce((best, current) => 
+      current[selectedDeductible] < best[selectedDeductible] ? current : best
+    );
+  };
+
+  const bestValue = data ? getBestValue(data) : null;
+
   return (
-    <main className="min-h-screen bg-gray-50 font-['Montserrat']">
-      <div className="container mx-auto px-4 py-8">
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 font-['Montserrat']">
+      <div className="container mx-auto px-4 py-6 lg:py-8">
+        {/* Enhanced Header */}
         <motion.header
-          className="text-center mb-12"
+          className="text-center mb-8 lg:mb-12"
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="flex items-center justify-center mb-4">
-            <Calculator className="text-[#305399] mr-3" size={48} />
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-800">
+          <div className="flex flex-col items-center mb-4">
+            <motion.div 
+              className="bg-[#305399] p-4 rounded-full mb-4 shadow-lg"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Calculator className="text-white" size={32} />
+            </motion.div>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 leading-tight">
               Premium Calculator
             </h1>
           </div>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto px-4">
             Get personalized travel insurance premium quotes tailored to your specific needs
           </p>
         </motion.header>
 
+        {/* Enhanced Form Section */}
         <motion.section
-          className="bg-white rounded-lg shadow-md p-8 mb-12"
+          className="bg-white rounded-2xl shadow-xl p-6 lg:p-8 mb-8 border border-gray-100"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="flex items-center mb-8">
-            <Shield className="text-[#305399] mr-3" size={32} />
-            <h2 className="text-2xl font-bold text-gray-800">
+          <div className="flex items-center mb-6 lg:mb-8">
+            <div className="bg-[#305399] p-2 rounded-lg mr-3">
+              <Shield className="text-white" size={24} />
+            </div>
+            <h2 className="text-xl lg:text-2xl font-bold text-gray-800">
               Enter Your Details
             </h2>
           </div>
@@ -92,13 +153,18 @@ export const PremiumOptions: React.FC = () => {
               e.preventDefault();
               fetchPremiums();
             }}
-            className="space-y-8"
+            className="space-y-6 lg:space-y-8"
           >
-            {/* First Row - Date and Trip Days */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label htmlFor="applicationDate" className="flex items-center text-lg font-semibold text-gray-700">
-                  <Calendar className="mr-2text-[#305399]" size={20} />
+            {/* Mobile-First Grid Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+              {/* Application Date */}
+              <motion.div 
+                className="space-y-2"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <label htmlFor="applicationDate" className="flex items-center text-base lg:text-lg font-semibold text-gray-700">
+                  <Calendar className="mr-2 text-[#305399]" size={18} />
                   Application Date
                 </label>
                 <input
@@ -108,13 +174,18 @@ export const PremiumOptions: React.FC = () => {
                   value={params.applicationDate}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-md px-4 py-3 text-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#305399] focus:border-transparent transition-all duration-200"
+                  className="w-full rounded-xl px-4 py-3 lg:py-4 text-base lg:text-lg border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#305399] focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
                 />
-              </div>
+              </motion.div>
               
-              <div className="space-y-2">
-                <label htmlFor="tripDays" className="flex items-center text-lg font-semibold text-gray-700">
-                  <Clock className="mr-2text-[#305399]" size={20} />
+              {/* Trip Duration */}
+              <motion.div 
+                className="space-y-2"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <label htmlFor="tripDays" className="flex items-center text-base lg:text-lg font-semibold text-gray-700">
+                  <Clock className="mr-2 text-[#305399]" size={18} />
                   Trip Duration (Days)
                 </label>
                 <input
@@ -126,16 +197,20 @@ export const PremiumOptions: React.FC = () => {
                   max={365}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-md px-4 py-3 text-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#305399] focus:border-transparent transition-all duration-200"
+                  className="w-full rounded-xl px-4 py-3 lg:py-4 text-base lg:text-lg border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#305399] focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
                 />
-              </div>
+              </motion.div>
             </div>
 
-            {/* Second Row - Age and Language */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label htmlFor="age" className="flex items-center text-lg font-semibold text-gray-700">
-                  <Users className="mr-2text-[#305399]" size={20} />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+              {/* Age */}
+              <motion.div 
+                className="space-y-2"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <label htmlFor="age" className="flex items-center text-base lg:text-lg font-semibold text-gray-700">
+                  <Users className="mr-2 text-[#305399]" size={18} />
                   Age
                 </label>
                 <input
@@ -147,163 +222,364 @@ export const PremiumOptions: React.FC = () => {
                   max={120}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-md px-4 py-3 text-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#305399] focus:border-transparent transition-all duration-200"
+                  className="w-full rounded-xl px-4 py-3 lg:py-4 text-base lg:text-lg border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#305399] focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
                 />
-              </div>
+              </motion.div>
               
-              <div className="space-y-2">
-                <label htmlFor="language" className="flex items-center text-lg font-semibold text-gray-700">
-                  <Globe className="mr-2text-[#305399]" size={20} />
+              {/* Language */}
+              <motion.div 
+                className="space-y-2"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <label htmlFor="language" className="flex items-center text-base lg:text-lg font-semibold text-gray-700">
+                  <Globe className="mr-2 text-[#305399]" size={18} />
                   Language
                 </label>
-                <select
-                  id="language"
-                  name="language"
-                  value={params.language}
-                  onChange={handleChange}
-                  className="w-full rounded-md px-4 py-3 text-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#305399] focus:border-transparent transition-all duration-200"
-                >
-                  <option value="EN">English</option>
-                  <option value="FR">French</option>
-                </select>
-              </div>
+                <div className="relative">
+                  <select
+                    id="language"
+                    name="language"
+                    value={params.language}
+                    onChange={handleChange}
+                    className="w-full rounded-xl px-4 py-3 lg:py-4 text-base lg:text-lg border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#305399] focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white appearance-none"
+                  >
+                    <option value="EN">English</option>
+                    <option value="FR">French</option>
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
+                </div>
+              </motion.div>
             </div>
 
-            {/* Third Row - Family Plan and Submit Button */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
-              <div className="space-y-2">
-                <label htmlFor="familyPlan" className="flex items-center text-lg font-semibold text-gray-700">
-                  <Users className="mr-2text-[#305399]" size={20} />
-                  Family Plan
-                </label>
-                <div className="flex items-center space-x-3 py-3">
-                  <input
-                    id="familyPlan"
-                    type="checkbox"
-                    name="familyPlan"
-                    checked={params.familyPlan}
-                    onChange={handleChange}
-                    className="w-5 h-5text-[#305399] border-gray-300 rounded focus:ring-[#305399] focus:ring-2"
-                  />
-                  <span className="text-lg text-gray-700">
+            {/* Family Plan Toggle */}
+            <motion.div 
+              className="space-y-2"
+              whileHover={{ scale: 1.01 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <label className="flex items-center text-base lg:text-lg font-semibold text-gray-700">
+                <Users className="mr-2 text-[#305399]" size={18} />
+                Family Plan
+              </label>
+              <div className="bg-gray-50 rounded-xl p-4 border-2 border-gray-200">
+                <label className="flex items-center cursor-pointer">
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      name="familyPlan"
+                      checked={params.familyPlan}
+                      onChange={handleChange}
+                      className="sr-only"
+                    />
+                    <div className={`w-12 h-6 rounded-full transition-colors duration-200 ${
+                      params.familyPlan ? 'bg-[#305399]' : 'bg-gray-300'
+                    }`}>
+                      <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-200 ${
+                        params.familyPlan ? 'translate-x-6' : 'translate-x-0.5'
+                      } mt-0.5`}></div>
+                    </div>
+                  </div>
+                  <span className="ml-4 text-base lg:text-lg text-gray-700">
                     {params.familyPlan ? "Yes, include family coverage" : "Individual coverage only"}
                   </span>
-                </div>
+                </label>
               </div>
-              
-              <motion.button
-                type="submit"
-                disabled={loading}
-                className={`w-full rounded-md px-8 py-4 text-xl font-semibold bg-[#305399] text-white shadow-md transition-all duration-200 hover:bg-[#305399] focus:outline-none focus:ring-2 focus:ring-[#305399] focus:ring-offset-2 ${
-                  loading ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"
-                }`}
-                whileTap={{ scale: 0.98 }}
-                whileHover={{ scale: loading ? 1 : 1.02 }}
-              >
-                {loading ? (
-                  <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="flex items-center justify-center gap-3"
-                  >
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                    Loading Premium Options...
-                  </motion.span>
-                ) : (
-                  <span className="flex items-center justify-center gap-2">
-                    <Calculator size={24} />
-                    Calculate Premium Options
-                  </span>
-                )}
-              </motion.button>
-            </div>
+            </motion.div>
+            
+            {/* Enhanced Submit Button */}
+         {/* Enhanced Submit Button */}
+<div className="flex justify-center">
+  <motion.button
+    type="submit"
+    disabled={loading}
+    className={`w-full max-w-md lg:max-w-lg rounded-xl px-6 py-3 lg:px-8 lg:py-4 text-base lg:text-lg font-bold bg-gradient-to-r from-[#305399] to-[#253A66] text-white shadow-lg transition-all duration-200 ${
+      loading ? "opacity-50 cursor-not-allowed" : "hover:shadow-xl hover:from-[#253A66] hover:to-[#305399]"
+    }`}
+    whileTap={{ scale: 0.98 }}
+    whileHover={{ scale: loading ? 1 : 1.02 }}
+  >
+
+              {loading ? (
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex items-center justify-center gap-3"
+                >
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                  Loading Premium Options...
+                </motion.span>
+              ) : (
+                <span className="flex items-center justify-center gap-3">
+                  <Calculator size={24} />
+                  Calculate Premium Options
+                  <ArrowRight size={20} />
+                </span>
+              )}
+            </motion.button>
+</div>
           </form>
         </motion.section>
 
+        {/* Error Display */}
         <AnimatePresence>
           {error && (
             <motion.section
-              className="bg-red-50 border border-red-200 text-red-800 rounded-lg p-6 mb-8 shadow-md"
+              className="bg-red-50 border-2 border-red-200 text-red-800 rounded-2xl p-6 mb-8 shadow-lg"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               role="alert"
               aria-live="polite"
             >
-              <h3 className="text-xl font-bold mb-2">Error Occurred</h3>
-              <p className="text-lg">{error}</p>
+              <div className="flex items-center mb-2">
+                <X className="mr-2 text-red-600" size={24} />
+                <h3 className="text-lg lg:text-xl font-bold">Error Occurred</h3>
+              </div>
+              <p className="text-base lg:text-lg">{error}</p>
             </motion.section>
           )}
         </AnimatePresence>
 
+        {/* Results Section */}
         <AnimatePresence>
           {data && (
             <motion.section
-              className="bg-white rounded-lg shadow-md overflow-hidden"
+              className="space-y-6"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 30 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="bg-gray-800 text-white p-6">
-                <div className="flex items-center justify-center">
-                  <DollarSign className="mr-3" size={32} />
-                  <h2 className="text-2xl font-bold text-center">
-                    Available Premium Options
-                  </h2>
+              {/* Results Header */}
+              <div className="bg-gradient-to-r from-[#305399] to-[#253A66] text-white rounded-2xl p-6 lg:p-8 shadow-xl">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                  <div className="flex items-center mb-4 lg:mb-0">
+                    <DollarSign className="mr-3" size={32} />
+                    <div>
+                      <h2 className="text-2xl lg:text-3xl font-bold">
+                        Available Premium Options
+                      </h2>
+                      <p className="text-blue-100 mt-1">
+                        {data.length} options found for your travel insurance needs
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Mobile Deductible Filter */}
+                  <div className="lg:hidden">
+                    <button
+                      onClick={() => setShowMobileFilters(!showMobileFilters)}
+                      className="flex items-center bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2 text-white font-medium"
+                    >
+                      <Filter className="mr-2" size={18} />
+                      Filter Deductible
+                      <ChevronDown className={`ml-2 transform transition-transform ${showMobileFilters ? 'rotate-180' : ''}`} size={16} />
+                    </button>
+                  </div>
                 </div>
-                <p className="text-center mt-2 text-gray-300">
-                  Choose the best option for your travel insurance needs
-                </p>
               </div>
-              
-              <div className="overflow-x-auto">
-                <table className="min-w-full">
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800">Sum Insured</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800">Schedule</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800">Trip Days</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800">Daily Rate</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800">Base Rate</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800">$0 Deductible</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800">$250 Deductible</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800">$500 Deductible</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800">$1000 Deductible</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800">$2500 Deductible</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800">$5000 Deductible</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800">$10000 Deductible</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {data.map((row, i) => (
-                      <motion.tr
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.05 * i }}
-                        className={`hover:bg-orange-50 transition-colors duration-200 ${
-                          i % 2 === 0 ? "bg-white" : "bg-gray-50"
-                        }`}
+
+              {/* Desktop Deductible Selector */}
+              <div className="hidden lg:block bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Select Deductible Amount</h3>
+                <div className="grid grid-cols-7 gap-2">
+                  {deductibleOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => setSelectedDeductible(option.value)}
+                      className={`relative p-3 rounded-lg border-2 transition-all duration-200 ${
+                        selectedDeductible === option.value
+                          ? 'border-[#305399] bg-[#305399] text-white shadow-lg'
+                          : 'border-gray-200 bg-gray-50 text-gray-700 hover:border-[#305399] hover:bg-blue-50'
+                      }`}
+                    >
+                      <div className="text-sm font-bold">{option.label}</div>
+                      {option.popular && (
+                        <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
+                          Popular
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Mobile Deductible Filter */}
+              <AnimatePresence>
+                {showMobileFilters && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="lg:hidden bg-white rounded-2xl shadow-lg p-4 border border-gray-100"
+                  >
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Select Deductible Amount</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      {deductibleOptions.map((option) => (
+                        <button
+                          key={option.value}
+                          onClick={() => {
+                            setSelectedDeductible(option.value);
+                            setShowMobileFilters(false);
+                          }}
+                          className={`relative p-3 rounded-lg border-2 transition-all duration-200 ${
+                            selectedDeductible === option.value
+                              ? 'border-[#305399] bg-[#305399] text-white shadow-lg'
+                              : 'border-gray-200 bg-gray-50 text-gray-700'
+                          }`}
+                        >
+                          <div className="text-sm font-bold">{option.label}</div>
+                          {option.popular && (
+                            <div className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs px-1 py-0.5 rounded-full">
+                              Popular
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Mobile Cards View */}
+              <div className="lg:hidden space-y-4">
+                {data.map((row, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.05 * i }}
+                    className={`bg-white rounded-2xl shadow-lg border-2 overflow-hidden ${
+                      bestValue && row === bestValue ? 'border-green-400 bg-green-50' : 'border-gray-200'
+                    }`}
+                  >
+                    {bestValue && row === bestValue && (
+                      <div className="bg-green-500 text-white text-center py-2 px-4">
+                        <div className="flex items-center justify-center">
+                          <Check className="mr-2" size={16} />
+                          <span className="font-bold text-sm">BEST VALUE</span>
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="p-6">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h3 className="text-xl font-bold text-gray-800">
+                            {formatCurrency(row.SumInsured)} Coverage
+                          </h3>
+                          <p className="text-gray-600">Schedule {row.ScheduleNo}</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-[#305399]">
+                            {formatCurrency(row[selectedDeductible])}
+                          </div>
+                          <p className="text-sm text-gray-600">
+                            {deductibleOptions.find(opt => opt.value === selectedDeductible)?.label} deductible
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-600">Trip Days:</span>
+                          <span className="font-semibold ml-2">{row.TripDays}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Daily Rate:</span>
+                          <span className="font-semibold ml-2">{formatCurrency(row.DailyRate)}</span>
+                        </div>
+                      </div>
+                      
+                      <button
+                        onClick={() => setExpandedRow(expandedRow === i ? null : i)}
+                        className="w-full mt-4 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-lg py-2 px-4 transition-colors duration-200"
                       >
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                          ${row.SumInsured.toLocaleString()}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-600">{row.ScheduleNo}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">{row.TripDays}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">${row.DailyRate}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">${row.Rate}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">${row.Deductible0}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">${row.Deductible250}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">${row.Deductible500}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">${row.Deductible1000}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">${row.Deductible2500}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">${row.Deductible5000}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">${row.Deductible10000}</td>
-                      </motion.tr>
-                    ))}
-                  </tbody>
-                </table>
+                        <Eye className="mr-2" size={16} />
+                        {expandedRow === i ? 'Hide Details' : 'View All Deductibles'}
+                        <ChevronDown className={`ml-2 transform transition-transform ${expandedRow === i ? 'rotate-180' : ''}`} size={16} />
+                      </button>
+                      
+                      <AnimatePresence>
+                        {expandedRow === i && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mt-4 space-y-2"
+                          >
+                            {deductibleOptions.map((option) => (
+                              <div key={option.value} className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded-lg">
+                                <span className="text-sm font-medium">{option.label} Deductible</span>
+                                <span className="font-bold text-[#305399]">{formatCurrency(row[option.value])}</span>
+                              </div>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Desktop Table View */}
+              <div className="hidden lg:block bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+                <div className="overflow-x-auto">
+                  <table className="min-w-full">
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-800">Coverage</th>
+                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-800">Schedule</th>
+                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-800">Trip Days</th>
+                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-800">Daily Rate</th>
+                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-800">Base Rate</th>
+                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-800">
+                          Selected Premium
+                          <div className="text-xs font-normal text-gray-600 mt-1">
+                            {deductibleOptions.find(opt => opt.value === selectedDeductible)?.label} deductible
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {data.map((row, i) => (
+                        <motion.tr
+                          key={i}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.05 * i }}
+                          className={`hover:bg-blue-50 transition-colors duration-200 ${
+                            bestValue && row === bestValue ? 'bg-green-50 border-l-4 border-green-500' : 
+                            i % 2 === 0 ? "bg-white" : "bg-gray-50"
+                          }`}
+                        >
+                          <td className="px-6 py-4">
+                            <div className="flex items-center">
+                              {bestValue && row === bestValue && (
+                                <div className="bg-green-500 text-white text-xs px-2 py-1 rounded-full mr-2 font-bold">
+                                  BEST
+                                </div>
+                              )}
+                              <div className="text-sm font-bold text-gray-900">
+                                {formatCurrency(row.SumInsured)}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-600 font-medium">{row.ScheduleNo}</td>
+                          <td className="px-6 py-4 text-sm text-gray-600 font-medium">{row.TripDays}</td>
+                          <td className="px-6 py-4 text-sm text-gray-600 font-medium">{formatCurrency(row.DailyRate)}</td>
+                          <td className="px-6 py-4 text-sm text-gray-600 font-medium">{formatCurrency(row.Rate)}</td>
+                          <td className="px-6 py-4">
+                            <div className="text-lg font-bold text-[#305399]">
+                              {formatCurrency(row[selectedDeductible])}
+                            </div>
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </motion.section>
           )}

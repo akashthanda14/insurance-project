@@ -18,8 +18,9 @@ import InsuranceSelection from './pages/Quote';
 import QuoteForm from './components/QuoteForm';
 import Plans from './pages/Plans';
 import ApplicantDetailsForm from './components/ApplicantDetailsForm';
-import { PremiumOptions } from './components/PremiumOptions';
+import {PremiumOptions} from './components/PremiumOptions';
 import PolicyPurchase from './components/PolicyPurchase';
+import PremiumOptions2 from './components/PremiumOptions2';
 
 function AppContent() {
   const location = useLocation();
@@ -48,6 +49,7 @@ function AppContent() {
           <Route path="/insurance/life" element={<LifeInsurance />} />
           <Route path="/InsuranceSelection" element={<InsuranceSelection/>}/>
           <Route path="/PremiumOptions" element={ <PremiumOptions />}/>
+          <Route path="/PremiumOptions2" element={ <PremiumOptions2 />}/>
           <Route path="/PolicyPurchase" element={<PolicyPurchase/>} />
           <Route path="/plans" element={<Plans/>} />
           <Route path="/Quoteform" element={<QuoteForm/>}/>

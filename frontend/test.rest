@@ -1,0 +1,7 @@
+### Get Monthly Payment Plan Schedule
+
+GET https://devweb.desttravel.com/api/visitorquote/premiumoptions?totalPremium=1226.40&firstPaymentDate=2025-01-20&startDate=2025-01-20&endDate=2026-01-19&paymentType=M
+Authorization: Basic c2hpa2hhLnNoYXJtYTo4diNGITJxUiR3OUB6TDF4
+Content-Type: application/json
+Accept-Language: EN
+Accept: application/json

@@ -12,48 +12,48 @@ const Navbar = () => {
     setActiveDropdown(activeDropdown === menu ? null : menu);
   };
 
-  const navItems = {
-    insurance: {
-      title: 'Insurance',
-      items: [
-        { icon: Car, label: 'Auto Insurance', link: '/insurance#auto' },
-        { icon: Home, label: 'Home Insurance', link: '/insurance#home' },
-        { icon: Briefcase, label: 'Business Insurance', link: '/insurance#business' },
-        { icon: Heart, label: 'Life Insurance', link: '/insurance#life' },
-        { icon: Plane, label: 'Travel Insurance', link: '/insurance#travel' },
-      ]
-    },
-    company: {
-      title: 'Company',
-      items: [
-        { icon: Shield, label: 'About Us', link: '/about' },
-        { icon: FileText, label: 'Claims', link: '/claims' },
-        { icon: Users, label: 'Our Team', link: '/team' },
-        { icon: Building2, label: 'Offices', link: '/offices' },
-        { icon: MessageSquare, label: 'Contact', link: '/contact' },
-      ]
-    },
-    resources: {
-      title: 'Resources',
-      items: [
-        { icon: Calculator, label: 'Insurance Calculator', link: '/calculator' },
-        { icon: BookOpen, label: 'Learning Center', link: '/learning' },
-        { icon: FileQuestion, label: 'FAQ', link: '/faq' },
-        { icon: Award, label: 'Insurance Guides', link: '/guides' },
-        { icon: Clock, label: 'Claims Process', link: '/claims-process' },
-      ]
-    },
-    support: {
-      title: 'Support',
-      items: [
-        { icon: Headphones, label: '24/7 Support', link: '/support' },
-        { icon: LifeBuoy, label: 'Emergency Help', link: '/emergency' },
-        { icon: HelpCircle, label: 'Help Center', link: '/help' },
-        { icon: Wallet, label: 'Billing', link: '/billing' },
-        { icon: Settings, label: 'Account Settings', link: '/settings' },
-      ]
-    }
-  };
+ const navItems = {
+  insurance: {
+    title: 'Insurance',
+    items: [
+      { icon: Car, label: 'Auto Insurance', link: '/insurance/auto' },
+      { icon: Home, label: 'Home Insurance', link: '/insurance/home' },
+      { icon: Briefcase, label: 'Business Insurance', link: '/insurance/business' },
+      { icon: Heart, label: 'Life Insurance', link: '/insurance/life' },
+      { icon: Plane, label: 'Travel Insurance', link: '/insurance/travel' },
+    ]
+  },
+  company: {
+    title: 'Company',
+    items: [
+      { icon: Shield, label: 'About Us', link: '/about' },
+      { icon: FileText, label: 'Claims', link: '/claims' },         // Make sure you have a /claims route/component
+      { icon: Users, label: 'Our Team', link: '/team' },            // Make sure you have a /team route/component
+      { icon: Building2, label: 'Offices', link: '/offices' },      // Make sure you have a /offices route/component
+      { icon: MessageSquare, label: 'Contact', link: '/contact' },  // Make sure you have a /contact route/component
+    ]
+  },
+  resources: {
+    title: 'Resources',
+    items: [
+      { icon: Calculator, label: 'Insurance Calculator', link: '/PremiumOptions' }, // Make sure you have a /calculator route/component
+      { icon: BookOpen, label: 'Learning Center', link: '/learning' },          // Make sure you have a /learning route/component
+      { icon: FileQuestion, label: 'FAQ', link: '/faq' },                       // Make sure you have a /faq route/component
+      { icon: Award, label: 'Insurance Guides', link: '/guides' },              // Make sure you have a /guides route/component
+      { icon: Clock, label: 'Claims Process', link: '/claims-process' },        // Make sure you have a /claims-process route/component
+    ]
+  },
+  support: {
+    title: 'Support',
+    items: [
+      { icon: Headphones, label: '24/7 Support', link: '/support' },            // Make sure you have a /support route/component
+      { icon: LifeBuoy, label: 'Emergency Help', link: '/emergency' },          // Make sure you have a /emergency route/component
+      { icon: HelpCircle, label: 'Help Center', link: '/help' },                // Make sure you have a /help route/component
+      { icon: Wallet, label: 'Billing', link: '/billing' },                     // Make sure you have a /billing route/component
+      { icon: Settings, label: 'Account Settings', link: '/settings' },         // Make sure you have a /settings route/component
+    ]
+  }
+};
 
   return (
     <nav className="w-full font-['Montserrat'] text-xl">
@@ -120,8 +120,8 @@ const Navbar = () => {
               ))}
               
               {/* Client Login Button - same color on home page */}
-              <Link to="/dashboard" className="bg-[#305399] text-white px-6 py-2 rounded-md hover:bg-[#253A66] transition-colors duration-200 font-medium shadow-lg">
-                Client Login
+              <Link to="/policyPurchase" className="bg-[#305399] text-white px-6 py-2 rounded-md hover:bg-[#253A66] transition-colors duration-200 font-medium shadow-lg">
+                Purchase Now
               </Link>
             </div>
           </div>
@@ -189,11 +189,11 @@ const Navbar = () => {
           {/* Mobile login button */}
           <div className="p-4 border-t border-gray-200 bg-gray-50">
             <Link
-              to="/dashboard"
+              to="/policyPurchase"
               className="block bg-[#305399] text-white text-center px-4 py-3 rounded-md hover:bg-[#253A66] transition-colors duration-200 font-medium shadow-md"
               onClick={() => setIsOpen(false)}
             >
-              Client Login
+              Purchase Now
             </Link>
           </div>
         </div>
