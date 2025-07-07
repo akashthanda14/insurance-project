@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const LifeInsurance: React.FC = () => {
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl text-[#ff735c]">
+    <div className="container mx-auto px-4 py-12 max-w-4xl text-[#305399]">
       <h1 className="text-4xl font-bold text-center mb-8">Life Insurance</h1>
 
       <section className="mb-10">
@@ -65,7 +65,7 @@ const LifeInsurance: React.FC = () => {
       <div className="text-center mt-12">
         <Link
           to="/quote/life"
-          className="inline-block bg-orange-500 text-white px-8 py-3 rounded-md hover:bg-orange-600 transition"
+          className="inline-block bg-[#305399] text-white px-8 py-3 rounded-md hover:bg-[#305399] transition"
         >
           Get a Life Insurance Quote
         </Link>

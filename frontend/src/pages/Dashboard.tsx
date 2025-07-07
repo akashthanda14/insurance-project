@@ -66,7 +66,7 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <BarChart3 className="h-8 w-8 text-orange-500" />
+              <BarChart3 className="h-8 w-8text-[#305399]" />
               <span className="ml-2 text-xl font-semibold text-gray-800">ClientDash</span>
             </div>
 
@@ -75,7 +75,7 @@ const Dashboard = () => {
                 <input
                   type="text"
                   placeholder="Search..."
-                  className="w-64 px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-64 px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#305399] focus:border-transparent"
                 />
                 <Search className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
               </div>
@@ -87,7 +87,7 @@ const Dashboard = () => {
                   className="p-2 rounded-full hover:bg-gray-100 relative"
                 >
                   <Bell className="h-6 w-6 text-gray-600" />
-                  <span className="absolute top-0 right-0 h-2 w-2 bg-orange-500 rounded-full"></span>
+                  <span className="absolute top-0 right-0 h-2 w-2 bg-[#305399] rounded-full"></span>
                 </button>
 
                 {isNotificationOpen && (
@@ -140,7 +140,7 @@ const Dashboard = () => {
                 <p className="text-sm text-green-500">+12% from last month</p>
               </div>
               <div className="bg-orange-100 p-3 rounded-lg">
-                <CreditCard className="h-6 w-6 text-orange-500" />
+                <CreditCard className="h-6 w-6text-[#305399]" />
               </div>
             </div>
           </div>
@@ -163,7 +163,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-sm text-gray-500">Team Members</p>
                 <p className="text-2xl font-semibold text-gray-800">24</p>
-                <p className="text-sm text-orange-500">2 new this month</p>
+                <p className="text-smtext-[#305399]">2 new this month</p>
               </div>
               <div className="bg-green-100 p-3 rounded-lg">
                 <Users className="h-6 w-6 text-green-500" />
@@ -236,7 +236,7 @@ const Dashboard = () => {
               <div key={activity.id} className="flex items-start space-x-4">
                 <div className={`w-2 h-2 mt-2 rounded-full ${
                   activity.type === 'success' ? 'bg-green-500' :
-                  activity.type === 'warning' ? 'bg-orange-500' : 'bg-blue-500'
+                  activity.type === 'warning' ? 'bg-[#305399]' : 'bg-blue-500'
                 }`} />
                 <div>
                   <p className="text-gray-800">{activity.text}</p>

@@ -130,21 +130,21 @@ const QuoteForm: React.FC = () => {
               Do you require medical coverage for Parent/Grandparent Super Visa?
             </label>
             <div className="flex gap-4">
-              <label className="flex-1 border rounded-md p-4 cursor-pointer hover:border-orange-500 transition-colors">
+              <label className="flex-1 border rounded-md p-4 cursor-pointer hover:border-[#305399] transition-colors">
                 <input
                   type="radio"
                   {...register('requiresMedical')}
                   value="true"
-                  className="h-4 w-4 text-orange-600 border-gray-300"
+                  className="h-4 w-4 text-[#305399] border-gray-300"
                 />
                 <span className="ml-2">Yes</span>
               </label>
-              <label className="flex-1 border rounded-md p-4 cursor-pointer hover:border-orange-500 transition-colors">
+              <label className="flex-1 border rounded-md p-4 cursor-pointer hover:border-[#305399] transition-colors">
                 <input
                   type="radio"
                   {...register('requiresMedical')}
                   value="false"
-                  className="h-4 w-4 text-orange-600 border-gray-300"
+                  className="h-4 w-4 text-[#305399] border-gray-300"
                 />
                 <span className="ml-2">No</span>
               </label>
@@ -159,7 +159,7 @@ const QuoteForm: React.FC = () => {
             <div className="border rounded-md">
               <select
                 {...register('numberOfTravelers')}
-                className="w-full px-4 py-3 rounded-md focus:ring-orange-500 focus:border-orange-500"
+                className="w-full px-4 py-3 rounded-md focus:ring-[#305399] focus:border-[#305399]"
               >
                 {[...Array(maxTravelers)].map((_, i) => (
                   <option key={i + 1} value={i + 1}>
@@ -178,7 +178,7 @@ const QuoteForm: React.FC = () => {
             <div className="border rounded-md">
               <select
                 {...register('destination', { required: 'Please select a destination' })}
-                className="w-full px-4 py-3 rounded-md focus:ring-orange-500 focus:border-orange-500"
+                className="w-full px-4 py-3 rounded-md focus:ring-[#305399] focus:border-[#305399]"
               >
                 <option value="">Select Province</option>
                 {PROVINCES.map(province => (
@@ -198,7 +198,7 @@ const QuoteForm: React.FC = () => {
                 type="date"
                 min={today}
                 {...register('startDate', { required: 'Start date is required' })}
-                className="w-full px-4 py-3 rounded-md focus:ring-orange-500 focus:border-orange-500"
+                className="w-full px-4 py-3 rounded-md focus:ring-[#305399] focus:border-[#305399]"
               />
             </div>
           </div>
@@ -232,7 +232,7 @@ const QuoteForm: React.FC = () => {
                       {...register(`travelers.${index}.dateOfBirth` as const, {
                         required: 'Date of birth is required'
                       })}
-                      className="w-full px-4 py-3 rounded-md focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-4 py-3 rounded-md focus:ring-[#305399] focus:border-[#305399]"
                     />
                   </div>
                 </div>
@@ -242,21 +242,21 @@ const QuoteForm: React.FC = () => {
                     Gender
                   </label>
                   <div className="flex gap-4">
-                    <label className="flex-1 border rounded-md p-4 cursor-pointer hover:border-orange-500 transition-colors">
+                    <label className="flex-1 border rounded-md p-4 cursor-pointer hover:border-[#305399] transition-colors">
                       <input
                         type="radio"
                         {...register(`travelers.${index}.gender` as const)}
                         value="MALE"
-                        className="h-4 w-4 text-orange-600 border-gray-300"
+                        className="h-4 w-4 text-[#305399] border-gray-300"
                       />
                       <span className="ml-2">Male</span>
                     </label>
-                    <label className="flex-1 border rounded-md p-4 cursor-pointer hover:border-orange-500 transition-colors">
+                    <label className="flex-1 border rounded-md p-4 cursor-pointer hover:border-[#305399] transition-colors">
                       <input
                         type="radio"
                         {...register(`travelers.${index}.gender` as const)}
                         value="FEMALE"
-                        className="h-4 w-4 text-orange-600 border-gray-300"
+                        className="h-4 w-4 text-[#305399] border-gray-300"
                       />
                       <span className="ml-2">Female</span>
                     </label>
@@ -268,21 +268,21 @@ const QuoteForm: React.FC = () => {
                     Pre-existing Medical Condition
                   </label>
                   <div className="flex gap-4">
-                    <label className="flex-1 border rounded-md p-4 cursor-pointer hover:border-orange-500 transition-colors">
+                    <label className="flex-1 border rounded-md p-4 cursor-pointer hover:border-[#305399] transition-colors">
                       <input
                         type="radio"
                         {...register(`travelers.${index}.preExistingCondition` as const)}
                         value="true"
-                        className="h-4 w-4 text-orange-600 border-gray-300"
+                        className="h-4 w-4 text-[#305399] border-gray-300"
                       />
                       <span className="ml-2">Yes</span>
                     </label>
-                    <label className="flex-1 border rounded-md p-4 cursor-pointer hover:border-orange-500 transition-colors">
+                    <label className="flex-1 border rounded-md p-4 cursor-pointer hover:border-[#305399] transition-colors">
                       <input
                         type="radio"
                         {...register(`travelers.${index}.preExistingCondition` as const)}
                         value="false"
-                        className="h-4 w-4 text-orange-600 border-gray-300"
+                        className="h-4 w-4 text-[#305399] border-gray-300"
                       />
                       <span className="ml-2">No</span>
                     </label>
@@ -307,7 +307,7 @@ const QuoteForm: React.FC = () => {
                     message: 'Invalid email address'
                   }
                 })}
-                className="w-full px-4 py-3 rounded-md focus:ring-orange-500 focus:border-orange-500"
+                className="w-full px-4 py-3 rounded-md focus:ring-[#305399] focus:border-[#305399]"
                 placeholder="Enter your email address"
               />
             </div>
@@ -334,7 +334,7 @@ const QuoteForm: React.FC = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-8 py-3 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors disabled:opacity-50"
+            className="px-8 py-3 bg-[#305399] text-white rounded-md hover:bg-orange-700 transition-colors disabled:opacity-50"
           >
             {isSubmitting ? 'Processing...' : 'Get Quotes'}
           </button>

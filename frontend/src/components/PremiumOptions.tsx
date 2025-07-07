@@ -64,7 +64,7 @@ export const PremiumOptions: React.FC = () => {
           transition={{ duration: 0.6 }}
         >
           <div className="flex items-center justify-center mb-4">
-            <Calculator className="text-orange-500 mr-3" size={48} />
+            <Calculator className="text-[#305399] mr-3" size={48} />
             <h1 className="text-4xl md:text-5xl font-bold text-gray-800">
               Premium Calculator
             </h1>
@@ -81,7 +81,7 @@ export const PremiumOptions: React.FC = () => {
           transition={{ duration: 0.5 }}
         >
           <div className="flex items-center mb-8">
-            <Shield className="text-orange-500 mr-3" size={32} />
+            <Shield className="text-[#305399] mr-3" size={32} />
             <h2 className="text-2xl font-bold text-gray-800">
               Enter Your Details
             </h2>
@@ -98,7 +98,7 @@ export const PremiumOptions: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label htmlFor="applicationDate" className="flex items-center text-lg font-semibold text-gray-700">
-                  <Calendar className="mr-2 text-orange-500" size={20} />
+                  <Calendar className="mr-2text-[#305399]" size={20} />
                   Application Date
                 </label>
                 <input
@@ -108,13 +108,13 @@ export const PremiumOptions: React.FC = () => {
                   value={params.applicationDate}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-md px-4 py-3 text-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                  className="w-full rounded-md px-4 py-3 text-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#305399] focus:border-transparent transition-all duration-200"
                 />
               </div>
               
               <div className="space-y-2">
                 <label htmlFor="tripDays" className="flex items-center text-lg font-semibold text-gray-700">
-                  <Clock className="mr-2 text-orange-500" size={20} />
+                  <Clock className="mr-2text-[#305399]" size={20} />
                   Trip Duration (Days)
                 </label>
                 <input
@@ -126,7 +126,7 @@ export const PremiumOptions: React.FC = () => {
                   max={365}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-md px-4 py-3 text-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                  className="w-full rounded-md px-4 py-3 text-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#305399] focus:border-transparent transition-all duration-200"
                 />
               </div>
             </div>
@@ -135,7 +135,7 @@ export const PremiumOptions: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label htmlFor="age" className="flex items-center text-lg font-semibold text-gray-700">
-                  <Users className="mr-2 text-orange-500" size={20} />
+                  <Users className="mr-2text-[#305399]" size={20} />
                   Age
                 </label>
                 <input
@@ -147,13 +147,13 @@ export const PremiumOptions: React.FC = () => {
                   max={120}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-md px-4 py-3 text-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                  className="w-full rounded-md px-4 py-3 text-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#305399] focus:border-transparent transition-all duration-200"
                 />
               </div>
               
               <div className="space-y-2">
                 <label htmlFor="language" className="flex items-center text-lg font-semibold text-gray-700">
-                  <Globe className="mr-2 text-orange-500" size={20} />
+                  <Globe className="mr-2text-[#305399]" size={20} />
                   Language
                 </label>
                 <select
@@ -161,7 +161,7 @@ export const PremiumOptions: React.FC = () => {
                   name="language"
                   value={params.language}
                   onChange={handleChange}
-                  className="w-full rounded-md px-4 py-3 text-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                  className="w-full rounded-md px-4 py-3 text-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#305399] focus:border-transparent transition-all duration-200"
                 >
                   <option value="EN">English</option>
                   <option value="FR">French</option>
@@ -173,7 +173,7 @@ export const PremiumOptions: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
               <div className="space-y-2">
                 <label htmlFor="familyPlan" className="flex items-center text-lg font-semibold text-gray-700">
-                  <Users className="mr-2 text-orange-500" size={20} />
+                  <Users className="mr-2text-[#305399]" size={20} />
                   Family Plan
                 </label>
                 <div className="flex items-center space-x-3 py-3">
@@ -183,7 +183,7 @@ export const PremiumOptions: React.FC = () => {
                     name="familyPlan"
                     checked={params.familyPlan}
                     onChange={handleChange}
-                    className="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500 focus:ring-2"
+                    className="w-5 h-5text-[#305399] border-gray-300 rounded focus:ring-[#305399] focus:ring-2"
                   />
                   <span className="text-lg text-gray-700">
                     {params.familyPlan ? "Yes, include family coverage" : "Individual coverage only"}
@@ -194,7 +194,7 @@ export const PremiumOptions: React.FC = () => {
               <motion.button
                 type="submit"
                 disabled={loading}
-                className={`w-full rounded-md px-8 py-4 text-xl font-semibold bg-orange-500 text-white shadow-md transition-all duration-200 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 ${
+                className={`w-full rounded-md px-8 py-4 text-xl font-semibold bg-[#305399] text-white shadow-md transition-all duration-200 hover:bg-[#305399] focus:outline-none focus:ring-2 focus:ring-[#305399] focus:ring-offset-2 ${
                   loading ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"
                 }`}
                 whileTap={{ scale: 0.98 }}

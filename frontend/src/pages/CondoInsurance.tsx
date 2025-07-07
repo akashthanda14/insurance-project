@@ -74,7 +74,7 @@ const CondoInsurance: React.FC = () => {
       <div className="text-center mt-12">
         <Link
           to="/quote/condo"
-          className="inline-block bg-orange-500 text-white px-8 py-3 rounded-md hover:bg-orange-600 transition"
+          className="inline-block bg-[#305399] text-white px-8 py-3 rounded-md hover:bg-[#305399] transition"
         >
           Get a Condo Insurance Quote
         </Link>

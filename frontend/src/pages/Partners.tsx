@@ -42,7 +42,7 @@ function Partners() {
           >
             <div className="flex-shrink-0">
               <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                <Shield className="w-6 h-6 text-orange-500" />
+                <Shield className="w-6 h-6text-[#305399]" />
               </div>
             </div>
             <div>
@@ -60,7 +60,7 @@ function Partners() {
         <p className="text-gray-600 mb-8">
           Want to become a partner? We're always looking to expand our network of trusted insurance providers.
         </p>
-        <button className="bg-orange-500 text-white px-8 py-3 rounded-md hover:bg-orange-600 transition-colors">
+        <button className="bg-[#305399] text-white px-8 py-3 rounded-md hover:bg-[#305399] transition-colors">
           Partner With Us
         </button>
       </div>

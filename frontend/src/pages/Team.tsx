@@ -4,7 +4,7 @@ const Teams = () => {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-50 px-4 py-8">
       <h3 className="text-4xl md:text-6xl font-bold mb-16 md:mb-32 text-gray-800 text-center">
-        <span className="uppercase text-orange-500">Thanks</span> to the Team
+        <span className="uppercasetext-[#305399]">Thanks</span> to the Team
       </h3>
 
       <div className="flex flex-col md:flex-row gap-12 md:gap-12">
@@ -15,10 +15,10 @@ const Teams = () => {
             alt="Team member 1"
             className="w-32 h-32 md:w-48 md:h-48 rounded-full object-cover shadow-lg transform transition-transform duration-300 group-hover:scale-105"
           />
-          <p className="mt-4 text-lg md:text-xl font-semibold text-gray-700 group-hover:text-orange-500 transition-colors duration-300">
+          <p className="mt-4 text-lg md:text-xl font-semibold text-gray-700 group-hover:text-[#305399] transition-colors duration-300">
             Sarah Chen
           </p>
-          <p className="text-sm md:text-base text-gray-600 group-hover:text-orange-500 transition-colors duration-300">
+          <p className="text-sm md:text-base text-gray-600 group-hover:text-[#305399] transition-colors duration-300">
             Sales Expert
           </p>
         </div>
@@ -30,10 +30,10 @@ const Teams = () => {
             alt="Team member 2"
             className="w-32 h-32 md:w-48 md:h-48 rounded-full object-cover shadow-lg transform transition-transform duration-300 group-hover:scale-105"
           />
-          <p className="mt-4 text-lg md:text-xl font-semibold text-gray-700 group-hover:text-orange-500 transition-colors duration-300">
+          <p className="mt-4 text-lg md:text-xl font-semibold text-gray-700 group-hover:text-[#305399] transition-colors duration-300">
             James Wilson
           </p>
-          <p className="text-sm md:text-base text-gray-600 group-hover:text-orange-500 transition-colors duration-300">
+          <p className="text-sm md:text-base text-gray-600 group-hover:text-[#305399] transition-colors duration-300">
             Senior Consultant
           </p>
         </div>
@@ -45,10 +45,10 @@ const Teams = () => {
             alt="Team member 3"
             className="w-32 h-32 md:w-48 md:h-48 rounded-full object-cover shadow-lg transform transition-transform duration-300 group-hover:scale-105"
           />
-          <p className="mt-4 text-lg md:text-xl font-semibold text-gray-700 group-hover:text-orange-500 transition-colors duration-300">
+          <p className="mt-4 text-lg md:text-xl font-semibold text-gray-700 group-hover:text-[#305399] transition-colors duration-300">
             Emily Taylor
           </p>
-          <p className="text-sm md:text-base text-gray-600 group-hover:text-orange-500 transition-colors duration-300">
+          <p className="text-sm md:text-base text-gray-600 group-hover:text-[#305399] transition-colors duration-300">
             Product Manager
           </p>
         </div>

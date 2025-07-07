@@ -7,6 +7,7 @@ function About() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="prose lg:prose-xl">
           <p className="text-lg text-gray-700 mb-4">
+
             We are committed to revolutionizing the insurance industry through innovative technology
             and exceptional customer service. Our platform makes it easier than ever to manage your
             insurance needs efficiently and effectively.

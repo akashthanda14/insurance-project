@@ -40,7 +40,7 @@ const Info = () => {
             <div className="space-y-6">
               {/* Phone */}
               <div className="flex items-start gap-4">
-                <Phone className="w-6 h-6 text-orange-600" />
+                <Phone className="w-6 h-6 text-[#305399]" />
                 <div className="text-gray-700">
                   <p className="font-semibold">Phone</p>
                   <p>+1 (555) 123-4567</p>
@@ -49,13 +49,13 @@ const Info = () => {
 
               {/* Email */}
               <div className="flex items-start gap-4">
-                <Mail className="w-6 h-6 text-orange-600" />
+                <Mail className="w-6 h-6 text-[#305399]" />
                 <div className="text-gray-700">
                   <p className="font-semibold">Email</p>
                   <p>
                     <button
                       onClick={() => setIsModalOpen(true)}
-                      className="text-orange-500 underline hover:text-orange-600"
+                      className="text-[#305399] underline hover:bg-[#253A66]"
                     >
                       contact@innovatetech.com
                     </button>
@@ -65,7 +65,7 @@ const Info = () => {
 
               {/* Hours */}
               <div className="flex items-start gap-4">
-                <Clock className="w-6 h-6 text-orange-600" />
+                <Clock className="w-6 h-6 text-[#253A66]" />
                 <div className="text-gray-700">
                   <p className="font-semibold">Business Hours</p>
                   <p>Mon–Fri: 9:00 AM – 6:00 PM</p>
@@ -80,7 +80,7 @@ const Info = () => {
           <div className="bg-gray-50 rounded-2xl p-6 shadow-inner space-y-4">
             <h4 className="text-3xl font-semibold text-gray-800 mb-2">About Us</h4>
             <p className="text-gray-700 text-lg">
-              At <span className="font-semibold text-orange-500">InnovateTech</span>, we’re more than just a tech company — we’re your growth partner. Since 2015, we've specialized in custom digital solutions, web apps, and tech consulting.
+              At <span className="font-semiboldtext-[#305399]">InnovateTech</span>, we’re more than just a tech company — we’re your growth partner. Since 2015, we've specialized in custom digital solutions, web apps, and tech consulting.
             </p>
             <p className="text-gray-700 text-lg">
               Whether you’re launching a startup or scaling an enterprise, our team provides tailored strategies that solve real problems and drive measurable results.
@@ -117,7 +117,7 @@ const Info = () => {
                   name="name"
                   ref={nameRef}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#305399] focus:outline-none"
                 />
               </div>
 
@@ -130,7 +130,7 @@ const Info = () => {
                   id="email"
                   name="email"
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#305399] focus:outline-none"
                 />
               </div>
 
@@ -143,7 +143,7 @@ const Info = () => {
                   id="subject"
                   name="subject"
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#305399] focus:outline-none"
                 />
               </div>
 
@@ -156,13 +156,13 @@ const Info = () => {
                   name="message"
                   rows={4}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#305399] focus:outline-none"
                 ></textarea>
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-orange-500 text-white py-2.5 rounded-lg hover:bg-orange-600 transition font-medium"
+                className="w-full bg-[#305399] text-white py-2.5 rounded-lg hover:bg-[#305399] transition font-medium"
               >
                 Send Message
               </button>

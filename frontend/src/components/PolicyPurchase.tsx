@@ -255,7 +255,7 @@ const PolicyPurchase: React.FC = () => {
             className="space-y-6"
           >
             <div className="flex items-center mb-6">
-              <Users className="text-orange-500 mr-3" size={24} />
+              <Users className="text-[#305399] mr-3" size={24} />
               <h3 className="text-xl md:text-2xl font-bold text-gray-800">Coverage Type</h3>
             </div>
             
@@ -270,7 +270,7 @@ const PolicyPurchase: React.FC = () => {
                   onClick={() => setCoverageType(option.type as 'S' | 'C' | 'F')}
                   className={`p-4 md:p-6 rounded-lg border-2 transition-all duration-200 text-center ${
                     coverageType === option.type
-                      ? 'border-orange-500 bg-orange-50'
+                      ? 'border-[#305399] bg-orange-50'
                       : 'border-gray-200 hover:border-orange-300'
                   }`}
                 >
@@ -283,7 +283,7 @@ const PolicyPurchase: React.FC = () => {
             <div className="space-y-6">
               <div className="space-y-4">
                 <h4 className="font-semibold text-lg flex items-center">
-                  <User className="mr-2 text-orange-500" size={20} />
+                  <User className="mr-2text-[#305399]" size={20} />
                   Primary Applicant
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -292,14 +292,14 @@ const PolicyPurchase: React.FC = () => {
                     placeholder="First Name"
                     value={primaryClient.FirstName}
                     onChange={(e) => setPrimaryClient({...primaryClient, FirstName: e.target.value})}
-                    className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                    className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                   />
                   <input
                     type="text"
                     placeholder="Last Name"
                     value={primaryClient.LastName}
                     onChange={(e) => setPrimaryClient({...primaryClient, LastName: e.target.value})}
-                    className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                    className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -307,12 +307,12 @@ const PolicyPurchase: React.FC = () => {
                     type="date"
                     value={primaryClient.BirthDate}
                     onChange={(e) => setPrimaryClient({...primaryClient, BirthDate: e.target.value})}
-                    className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                    className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                   />
                   <select
                     value={primaryClient.Gender}
                     onChange={(e) => setPrimaryClient({...primaryClient, Gender: e.target.value})}
-                    className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                    className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                   >
                     <option value="M">Male</option>
                     <option value="F">Female</option>
@@ -323,7 +323,7 @@ const PolicyPurchase: React.FC = () => {
               {(coverageType === 'C' || coverageType === 'F') && (
                 <div className="space-y-4">
                   <h4 className="font-semibold text-lg flex items-center">
-                    <Users className="mr-2 text-orange-500" size={20} />
+                    <Users className="mr-2text-[#305399]" size={20} />
                     Spouse/Partner
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -332,14 +332,14 @@ const PolicyPurchase: React.FC = () => {
                       placeholder="First Name"
                       value={spouseClient.FirstName}
                       onChange={(e) => setSpouseClient({...spouseClient, FirstName: e.target.value})}
-                      className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                      className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                     />
                     <input
                       type="text"
                       placeholder="Last Name"
                       value={spouseClient.LastName}
                       onChange={(e) => setSpouseClient({...spouseClient, LastName: e.target.value})}
-                      className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                      className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                     />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -347,12 +347,12 @@ const PolicyPurchase: React.FC = () => {
                       type="date"
                       value={spouseClient.BirthDate}
                       onChange={(e) => setSpouseClient({...spouseClient, BirthDate: e.target.value})}
-                      className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                      className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                     />
                     <select
                       value={spouseClient.Gender}
                       onChange={(e) => setSpouseClient({...spouseClient, Gender: e.target.value})}
-                      className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                      className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                     >
                       <option value="M">Male</option>
                       <option value="F">Female</option>
@@ -372,7 +372,7 @@ const PolicyPurchase: React.FC = () => {
             className="space-y-6"
           >
             <div className="flex items-center mb-6">
-              <MapPin className="text-orange-500 mr-3" size={24} />
+              <MapPin className="text-[#305399] mr-3" size={24} />
               <h3 className="text-xl md:text-2xl font-bold text-gray-800">Contact Information</h3>
             </div>
             
@@ -383,7 +383,7 @@ const PolicyPurchase: React.FC = () => {
                   placeholder="Street Address"
                   value={addressInfo.Address}
                   onChange={(e) => setAddressInfo({...addressInfo, Address: e.target.value})}
-                  className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                  className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                 />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <input
@@ -391,12 +391,12 @@ const PolicyPurchase: React.FC = () => {
                     placeholder="City"
                     value={addressInfo.City}
                     onChange={(e) => setAddressInfo({...addressInfo, City: e.target.value})}
-                    className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                    className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                   />
                   <select
                     value={addressInfo.Prov}
                     onChange={(e) => setAddressInfo({...addressInfo, Prov: e.target.value})}
-                    className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                    className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                   >
                     {provinces.map(prov => (
                       <option key={prov.code} value={prov.code}>{prov.name}</option>
@@ -408,29 +408,29 @@ const PolicyPurchase: React.FC = () => {
                   placeholder="Postal Code"
                   value={addressInfo.PostalCode}
                   onChange={(e) => setAddressInfo({...addressInfo, PostalCode: e.target.value})}
-                  className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                  className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                 />
               </div>
               
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
-                  <Mail className="text-orange-500 flex-shrink-0" size={20} />
+                  <Mail className="text-[#305399] flex-shrink-0" size={20} />
                   <input
                     type="email"
                     placeholder="Email Address"
                     value={addressInfo.Email}
                     onChange={(e) => setAddressInfo({...addressInfo, Email: e.target.value})}
-                    className="flex-1 rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                    className="flex-1 rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                   />
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Phone className="text-orange-500 flex-shrink-0" size={20} />
+                  <Phone className="text-[#305399] flex-shrink-0" size={20} />
                   <input
                     type="tel"
                     placeholder="Phone Number"
                     value={addressInfo.Phone}
                     onChange={(e) => setAddressInfo({...addressInfo, Phone: e.target.value})}
-                    className="flex-1 rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                    className="flex-1 rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                   />
                 </div>
               </div>
@@ -446,7 +446,7 @@ const PolicyPurchase: React.FC = () => {
             className="space-y-6"
           >
             <div className="flex items-center mb-6">
-              <Calendar className="text-orange-500 mr-3" size={24} />
+              <Calendar className="text-[#305399] mr-3" size={24} />
               <h3 className="text-xl md:text-2xl font-bold text-gray-800">Policy Details</h3>
             </div>
             
@@ -460,7 +460,7 @@ const PolicyPurchase: React.FC = () => {
                       type="date"
                       value={policyDetails.ArrivalDate}
                       onChange={(e) => setPolicyDetails({...policyDetails, ArrivalDate: e.target.value})}
-                      className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                      className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                     />
                   </div>
                   <div>
@@ -469,7 +469,7 @@ const PolicyPurchase: React.FC = () => {
                       type="date"
                       value={policyDetails.EffectiveDate}
                       onChange={(e) => setPolicyDetails({...policyDetails, EffectiveDate: e.target.value})}
-                      className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                      className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                     />
                   </div>
                 </div>
@@ -479,7 +479,7 @@ const PolicyPurchase: React.FC = () => {
                     type="date"
                     value={policyDetails.ExpiryDate}
                     onChange={(e) => setPolicyDetails({...policyDetails, ExpiryDate: e.target.value})}
-                    className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                    className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                   />
                 </div>
               </div>
@@ -487,7 +487,7 @@ const PolicyPurchase: React.FC = () => {
 
             <div className="bg-orange-50 rounded-lg p-4 md:p-6">
               <h4 className="font-semibold text-lg mb-4 flex items-center">
-                <DollarSign className="mr-2 text-orange-500" size={20} />
+                <DollarSign className="mr-2text-[#305399]" size={20} />
                 Premium Summary
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
@@ -505,7 +505,7 @@ const PolicyPurchase: React.FC = () => {
                 </div>
                 <div>
                   <span className="text-gray-600">Total Premium:</span>
-                  <p className="font-bold text-base md:text-lg text-orange-600">${policyDetails.TotalPremium}</p>
+                  <p className="font-bold text-base md:text-lg text-[#305399]">${policyDetails.TotalPremium}</p>
                 </div>
               </div>
             </div>
@@ -520,7 +520,7 @@ const PolicyPurchase: React.FC = () => {
             className="space-y-6"
           >
             <div className="flex items-center mb-6">
-              <CreditCard className="text-orange-500 mr-3" size={24} />
+              <CreditCard className="text-[#305399] mr-3" size={24} />
               <h3 className="text-xl md:text-2xl font-bold text-gray-800">Payment Information</h3>
             </div>
             
@@ -531,7 +531,7 @@ const PolicyPurchase: React.FC = () => {
                   placeholder="Cardholder Name"
                   value={paymentInfo.CardHolderName}
                   onChange={(e) => setPaymentInfo({...paymentInfo, CardHolderName: e.target.value})}
-                  className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm md:text-base"
+                  className="w-full rounded-md px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-[#305399] focus:border-transparent text-sm md:text-base"
                 />
                 
                 {!paymentTokenReceived && (
@@ -541,7 +541,7 @@ const PolicyPurchase: React.FC = () => {
                       <button
                         onClick={handlePaymentSetup}
                         disabled={paymentProcessing}
-                        className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 disabled:opacity-50 flex items-center gap-2"
+                        className="px-4 py-2 bg-[#305399] text-white rounded-md hover:bg-[#305399] disabled:opacity-50 flex items-center gap-2"
                       >
                         {paymentProcessing ? (
                           <>
@@ -586,7 +586,7 @@ const PolicyPurchase: React.FC = () => {
 
             <div className="bg-orange-50 rounded-lg p-4 md:p-6">
               <h4 className="font-semibold text-lg mb-4 flex items-center">
-                <DollarSign className="mr-2 text-orange-500" size={20} />
+                <DollarSign className="mr-2text-[#305399]" size={20} />
                 Final Payment Summary
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
@@ -604,7 +604,7 @@ const PolicyPurchase: React.FC = () => {
                 </div>
                 <div>
                   <span className="text-gray-600">Total Premium:</span>
-                  <p className="font-bold text-base md:text-lg text-orange-600">${policyDetails.TotalPremium}</p>
+                  <p className="font-bold text-base md:text-lg text-[#305399]">${policyDetails.TotalPremium}</p>
                 </div>
               </div>
             </div>
@@ -662,7 +662,7 @@ const PolicyPurchase: React.FC = () => {
           transition={{ duration: 0.6 }}
         >
           <div className="flex items-center justify-center mb-4">
-            <FileText className="text-orange-500 mr-3" size={32} />
+            <FileText className="text-[#305399] mr-3" size={32} />
             <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-gray-800">
               Purchase Policy
             </h1>
@@ -678,13 +678,13 @@ const PolicyPurchase: React.FC = () => {
             {[1, 2, 3, 4, 5].map((stepNum) => (
               <div key={stepNum} className="flex items-center">
                 <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center font-semibold text-sm md:text-base ${
-                  step >= stepNum ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-600'
+                  step >= stepNum ? 'bg-[#305399] text-white' : 'bg-gray-200 text-gray-600'
                 }`}>
                   {stepNum}
                 </div>
                 {stepNum < 5 && (
                   <div className={`w-8 md:w-16 h-1 mx-1 md:mx-2 ${
-                    step > stepNum ? 'bg-orange-500' : 'bg-gray-200'
+                    step > stepNum ? 'bg-[#305399]' : 'bg-gray-200'
                   }`} />
                 )}
               </div>
@@ -748,7 +748,7 @@ const PolicyPurchase: React.FC = () => {
               className={`w-full sm:w-auto px-6 py-3 rounded-md font-semibold transition-all duration-200 flex items-center justify-center gap-2 text-sm md:text-base ${
                 loading || (step === 4 && !paymentTokenReceived)
                   ? 'bg-gray-400 text-white cursor-not-allowed'
-                  : 'bg-orange-500 text-white hover:bg-orange-600'
+                  : 'bg-[#305399] text-white hover:bg-[#305399]'
               }`}
             >
               {loading ? (

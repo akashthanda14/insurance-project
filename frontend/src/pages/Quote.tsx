@@ -33,7 +33,7 @@ const InsuranceSelection = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 py-12">
       <h1 className="text-4xl font-bold text-gray-800 mb-12 text-center">
-        <span className="text-orange-500">Choose</span> Your Insurance Type
+        <span className="text-[#305399]">Choose</span> Your Insurance Type
       </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 w-full max-w-6xl">
@@ -43,8 +43,8 @@ const InsuranceSelection = () => {
             onClick={() => handleSelect(name)}
             className="flex flex-col items-center justify-center bg-white border border-orange-100 hover:border-orange-400 hover:shadow-md transition-all duration-300 rounded-2xl p-6 cursor-pointer group"
           >
-            <Icon className="w-14 h-14 text-orange-500 mb-4 group-hover:scale-110 transition-transform duration-300" />
-            <p className="text-base font-medium text-gray-800 group-hover:text-orange-600 text-center">
+            <Icon className="w-14 h-14text-[#305399] mb-4 group-hover:scale-110 transition-transform duration-300" />
+            <p className="text-base font-medium text-gray-800 group-hover:text-[#305399] text-center">
               {name}
             </p>
           </div>

@@ -4,7 +4,7 @@ import { Facebook, Twitter, Linkedin as LinkedIn, Instagram } from 'lucide-react
 
 const Footer = () => {
   return (
-    <footer className="bg-orange-500 text-white mt-12 py-12"> {/* Increased vertical padding */}
+    <footer className="bg-[#305399] text-white mt-12 py-12"> {/* Increased vertical padding */}
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12"> {/* Increased gap between sections */}
           <div>
@@ -50,7 +50,7 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="border-t border-orange-400 mt-12 pt-8 text-center">
+        <div className="border-t border-white mt-12 pt-8 text-center">
           <p className="text-2xl">&copy; {new Date().getFullYear()} Think Big Insurance. All rights reserved.</p> {/* Increased font size */}
         </div>
       </div>

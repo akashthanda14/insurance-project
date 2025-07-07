@@ -25,7 +25,7 @@ const ApplicantDetailsForm = () => {
 
   return (
     <div className="max-w-[965px] mx-auto p-6 bg-white rounded-xl shadow">
-      <h1 className="text-white bg-orange-500 p-4 rounded-t-xl text-xl font-semibold">
+      <h1 className="text-white bg-[#305399] p-4 rounded-t-xl text-xl font-semibold">
         Enter Your Trip Details
       </h1>
       <p className="flex items-center text-sm text-gray-600 mt-2">
