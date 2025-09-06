@@ -12,48 +12,35 @@ const Navbar = () => {
     setActiveDropdown(activeDropdown === menu ? null : menu);
   };
 
- const navItems = {
+const navItems = {
   insurance: {
     title: 'Insurance',
     items: [
-      { icon: Car, label: 'Auto Insurance', link: '/insurance/auto' },
-      { icon: Home, label: 'Home Insurance', link: '/insurance/home' },
-      { icon: Briefcase, label: 'Business Insurance', link: '/insurance/business' },
-      { icon: Heart, label: 'Life Insurance', link: '/insurance/life' },
-      { icon: Plane, label: 'Travel Insurance', link: '/insurance/travel' },
+      { icon:Shield, label: 'All Insurance', link: '/insurance' },
+      { icon:Heart, label: 'Life Insurance', link: '/lifeinfo' },
+      { icon:Plane, label: 'Travel Insurance', link: '/travelinsuranceinfo' },
+      { icon:Home, label: 'Health & Dental', link: '/healthDentalinfo' },
     ]
   },
   company: {
     title: 'Company',
     items: [
-      { icon: Shield, label: 'About Us', link: '/about' },
-      { icon: FileText, label: 'Claims', link: '/claims' },         // Make sure you have a /claims route/component
-      { icon: Users, label: 'Our Team', link: '/team' },            // Make sure you have a /team route/component
-      { icon: Building2, label: 'Offices', link: '/offices' },      // Make sure you have a /offices route/component
-      { icon: MessageSquare, label: 'Contact', link: '/contact' },  // Make sure you have a /contact route/component
+      { icon:Shield, label: 'About Us', link: '/about' },
+      { icon:MessageSquare, label: 'Contact', link: '/contact' },
     ]
   },
   resources: {
     title: 'Resources',
     items: [
-      { icon: Calculator, label: 'Insurance Calculator', link: '/PremiumOptions' }, // Make sure you have a /calculator route/component
-      { icon: BookOpen, label: 'Learning Center', link: '/learning' },          // Make sure you have a /learning route/component
-      { icon: FileQuestion, label: 'FAQ', link: '/faq' },                       // Make sure you have a /faq route/component
-      { icon: Award, label: 'Insurance Guides', link: '/guides' },              // Make sure you have a /guides route/component
-      { icon: Clock, label: 'Claims Process', link: '/claims-process' },        // Make sure you have a /claims-process route/component
-    ]
-  },
-  support: {
-    title: 'Support',
-    items: [
-      { icon: Headphones, label: '24/7 Support', link: '/support' },            // Make sure you have a /support route/component
-      { icon: LifeBuoy, label: 'Emergency Help', link: '/emergency' },          // Make sure you have a /emergency route/component
-      { icon: HelpCircle, label: 'Help Center', link: '/help' },                // Make sure you have a /help route/component
-      { icon: Wallet, label: 'Billing', link: '/billing' },                     // Make sure you have a /billing route/component
-      { icon: Settings, label: 'Account Settings', link: '/settings' },         // Make sure you have a /settings route/component
+      { icon:Calculator, label: 'Premium Option 1', link: '/PremiumOptions' },
+      { icon:Calculator, label: 'Premium Option 2', link: '/PremiumOptions2' },
+      { icon:BookOpen, label: 'Quote Form', link: '/Quoteform' },
+      { icon:FileText, label: 'Applicant Form', link: '/Applicantform' },
+      { icon:Briefcase, label: 'Investments', link: '/Investment' },
     ]
   }
 };
+
 
   return (
     <nav className="w-full font-['Montserrat'] text-xl">
@@ -62,7 +49,10 @@ const Navbar = () => {
         <div className="container mx-auto px-4 flex justify-end items-center">
           <div className="flex items-center">
             <Phone size={16} className="mr-2" />
-            <span className="drop-shadow-lg">1-800-THINK-BIG</span>
+            <a href="tel:+16476162106" className="drop-shadow-lg text-inherit hover:underline focus:outline-none">
+  +1 64-761-621-06
+</a>
+
           </div>
         </div>
       </div>
@@ -71,11 +61,11 @@ const Navbar = () => {
       <div className={`${isHomePage ? 'bg-transparent' : 'bg-white'} relative`}>
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center py-4">
-            {/* Logo - white text on home page */}
-            <Link to="/" className={`text-2xl font-bold ${isHomePage ? 'text-white drop-shadow-lg' : 'text-[#305399]'}`}>
-              Think Big Insurance
-            </Link>
-            
+        {/* Logo - white text on home page */}
+        <Link to="/" className={`text-2xl font-bold ${isHomePage ? 'text-white drop-shadow-lg' : 'text-[#305399]'}`}>
+          <img src="src/assets/logo-resize.png" alt="Logo" className="h-12 w-12 md:h-14 md:w-14" />
+        </Link>
+        
             {/* Mobile menu button - white on home page */}
             <button
               className={`md:hidden p-2 ${isHomePage ? 'text-white' : 'text-[#305399]'}`}
@@ -142,7 +132,7 @@ const Navbar = () => {
               <X size={24} />
             </button>
             <Link to="/" className="text-xl font-bold block py-2" onClick={() => setIsOpen(false)}>
-              Think Big Insurance
+              INVESTOR INSURANCE
             </Link>
           </div>
           

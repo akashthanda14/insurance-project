@@ -5,22 +5,25 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import About from './pages/About';
 import Insurance from './pages/Insurance';
-import Dashboard from './pages/Dashboard';
-import Partners from './pages/Partners';
-import AutoInsurance from './pages/AutoInsursance';
-import BusinessInsurance from './pages/BussinessInsurance';
-import HomeInsurance from './pages/HomeInsurance';
-import TenantsInsurance from './pages/TenantsInsurance';
-import CondoInsurance from './pages/CondoInsurance';
-import TravelInsurance from './pages/TravelInsurance';
-import LifeInsurance from './pages/LifeInsurance';
-import InsuranceSelection from './pages/Quote';
 import QuoteForm from './components/QuoteForm';
-import Plans from './pages/Plans';
 import ApplicantDetailsForm from './components/ApplicantDetailsForm';
 import {PremiumOptions} from './components/PremiumOptions';
 import PolicyPurchase from './components/PolicyPurchase';
 import PremiumOptions2 from './components/PremiumOptions2';
+import ScrollToTop from "./components/ScrollToTop";
+import InvestmentProducts from './components/Investment';
+import { Contact } from 'lucide-react';
+import ContactForm from './components/ContactUs';
+import HealthDentalInfo from './components/HealthDentalInfo';
+import LifeInsuranceInfo from './components/LifeInsuranceInfo';
+import TravelInsuranceInfo from './components/TravelInsuranceInfo';
+import { InsuranceOptions } from './components/SelectInsurance';
+import RRSPCalculator from './components/RRSPCalculator';
+import { TFSACalculator } from './components/TFSACalculator';
+import FSHACalculator from './components/FSHACalculator';
+import RESPCalculator from './components/RESPCalculator';
+import SavingsRetirementCalculators from './components/SavingsRetirementCalculators';
+import LifeTermInsuranceQuote from './components/LifeTermInsuranceQuote';
 
 function AppContent() {
   const location = useLocation();
@@ -38,22 +41,23 @@ function AppContent() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/insurance" element={<Insurance />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/partners" element={<Partners />} />
-          <Route path="/insurance/auto" element={<AutoInsurance />} />
-          <Route path="/insurance/business" element={<BusinessInsurance />} />
-          <Route path="/insurance/home" element={<HomeInsurance />} />
-          <Route path="/insurance/tenants" element={<TenantsInsurance />} />
-          <Route path="/insurance/condo" element={<CondoInsurance />} />
-          <Route path="/insurance/travel" element={<TravelInsurance />} />
-          <Route path="/insurance/life" element={<LifeInsurance />} />
-          <Route path="/InsuranceSelection" element={<InsuranceSelection/>}/>
           <Route path="/PremiumOptions" element={ <PremiumOptions />}/>
           <Route path="/PremiumOptions2" element={ <PremiumOptions2 />}/>
+          <Route path="Investment" element={<InvestmentProducts/>}/>
           <Route path="/PolicyPurchase" element={<PolicyPurchase/>} />
-          <Route path="/plans" element={<Plans/>} />
+          <Route path="contact" element={<ContactForm/>}/>
+          <Route path="/healthDentalinfo" element={<HealthDentalInfo/>} />
+          <Route path="/lifeinfo" element={<LifeInsuranceInfo/>} />
+          <Route path="/travelinsuranceinfo" element={<TravelInsuranceInfo/>} />
           <Route path="/Quoteform" element={<QuoteForm/>}/>
           <Route path="/Applicantform" element={<ApplicantDetailsForm/>}/>
+          <Route path="/InsuranceOptions" element={<InsuranceOptions/>}/>
+          <Route path="/RRSPCalculator" element={<RRSPCalculator/>}/>
+          <Route path="/TFSACalculator" element={<TFSACalculator/>}/>
+          <Route path="/FSHACalculator" element={<FSHACalculator/>}/>
+          <Route path="/RESPCalculator" element={<RESPCalculator/>}/>
+          <Route path="/SavingsRetirementCalculators" element={<SavingsRetirementCalculators/>}/>
+          <Route path="/LifeTermInsuranceQuote" element={<LifeTermInsuranceQuote/>}/>
         </Routes>
       </main>
 
@@ -65,6 +69,7 @@ function AppContent() {
 function App() {
   return (
     <Router>
+       <ScrollToTop />
       <AppContent />
     </Router>
   );

@@ -1,21 +1,23 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Contact, Calculator } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { InfiniteMovingCards } from '../components/InfiniteMovingCards';
 import MapComponent from '../components/MapComponent';
 import Teams from './Team';
 import Insurance from './Insurance';
 import Info from '../components/Info';
-// Remove: import Navbar from '../components/Navbar';
+import InvestmentProducts from '../components/Investment';
+import ContactForm from '../components/ContactUs';
+import { InsuranceOptions } from '../components/SelectInsurance';
 
 const Home = () => {
   return (
     <>
-      {/* Hero Section with Background Image */}
+      {/* Hero Section with Responsive Background Images */}
       <div 
         className="relative min-h-screen w-full bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('/src/assets/family-home.jpg')`,
+          backgroundImage: `url('https://res.cloudinary.com/dmt4dj8ft/image/upload/v1751907296/Pokecut_1751907266056_dkeky6.jpg')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
@@ -23,7 +25,16 @@ const Home = () => {
           height: '100vh'
         }}
       >
-        {/* Remove the entire navbar div block */}
+        {/* Desktop Background Image Override */}
+        <div 
+          className="hidden md:block absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('https://res.cloudinary.com/dmt4dj8ft/image/upload/v1751906950/family-home_1_w6roxi.jpg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        ></div>
         
         {/* Overlay for better text readability */}
         <div className="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
@@ -37,13 +48,20 @@ const Home = () => {
             <h2 className="text-2xl md:text-4xl lg:text-5xl lato-thin mb-6 md:mb-8 text-white drop-shadow-lg">
               Matters Most.
             </h2>
-            <div className="mt-8">
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link
-                to="/PremiumOptions"
-                className="inline-flex uppercase lato-bold items-center bg-[#305399] text-white px-8 md:px-12 py-3 md:py-4 text-lg md:text-xl font-bold hover:bg-[#253A66] transition-colors duration-300 rounded-md shadow-lg hover:shadow-xl transform hover:scale-105"
+                to="/InsuranceOptions"
+                className="inline-flex uppercase lato-bold items-center bg-[#305399] text-white px-6 md:px-10 py-3 md:py-4 text-base md:text-lg font-bold hover:bg-[#253A66] transition-all duration-300 rounded-md shadow-lg hover:shadow-xl transform hover:scale-105 w-full sm:w-auto min-w-[200px] justify-center"
               >
                 Start Your Quote
-                <ArrowRight className="ml-2" size={20} />
+                <ArrowRight className="ml-2" size={18} />
+              </Link>
+              <Link
+                to="/SavingsRetirementCalculators"
+                className="inline-flex uppercase lato-bold items-center bg-[#28a745] text-white px-6 md:px-10 py-3 md:py-4 text-base md:text-lg font-bold hover:bg-[#218838] transition-all duration-300 rounded-md shadow-lg hover:shadow-xl transform hover:scale-105 w-full sm:w-auto min-w-[200px] justify-center"
+              >
+                Savings Calculator
+                <Calculator className="ml-2" size={18} />
               </Link>
             </div>
           </div>
@@ -76,8 +94,11 @@ const Home = () => {
         
         <Info />
         <Insurance />
+        <InvestmentProducts/>
         <Teams />
         <MapComponent />
+        <ContactForm/>
+        
       </div>
     </>
   );

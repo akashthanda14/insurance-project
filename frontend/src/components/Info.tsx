@@ -164,8 +164,8 @@ const Info = () => {
                 </div>
                 <div className="text-gray-700">
                   <p className="font-semibold text-lg">Phone Support</p>
-                  <a href="tel:+15551234567" className="text-[#305399] hover:text-[#253A66] transition-colors">
-                    +1 (555) 123-4567
+                  <a href="tel:+16476162106" className="text-[#305399] hover:text-[#253A66] transition-colors">
+                    +1 (647) 61-621-06
                   </a>
                   <p className="text-sm text-gray-500">Available 24/7 for emergencies</p>
                 </div>
@@ -182,7 +182,7 @@ const Info = () => {
                     onClick={() => setIsModalOpen(true)}
                     className="text-[#305399] hover:text-[#253A66] transition-colors underline decoration-2 underline-offset-2"
                   >
-                    contact@thinkbiginsurance.com
+                    info@investorinsurance.ca
                   </button>
                   <p className="text-sm text-gray-500">We respond within 24 hours</p>
                 </div>
@@ -193,10 +193,12 @@ const Info = () => {
                 <div className="bg-[#305399] p-3 rounded-full">
                   <MapPin className="w-6 h-6 text-white" />
                 </div>
-                <div className="text-gray-700">
-                  <p className="font-semibold text-lg">Visit Our Office</p>
-                  <p>123 Insurance Ave<br />Toronto, ON M5V 2T6<br />Canada</p>
-                </div>
+               <div className="text-gray-700">
+  <p className="font-semibold text-lg">Visit Our Office</p>
+  <p>Mississauga, Ontario, Canada</p>
+  <p>Area of Operation: All over Canada</p>
+</div>
+
               </div>
 
               {/* Hours */}
@@ -218,11 +220,11 @@ const Info = () => {
 
           {/* About Us */}
           <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 shadow-inner space-y-6 border border-gray-200">
-            <h2 className="text-3xl font-semibold text-gray-800 mb-4">About Think Big Insurance</h2>
+            <h2 className="text-3xl font-semibold text-gray-800 mb-4">About INVESTOR INSURANCE</h2>
             
             <div className="space-y-4 text-gray-700 text-lg leading-relaxed">
               <p>
-                At <span className="font-semibold text-[#305399]">Think Big Insurance</span>, we believe that great insurance 
+                At <span className="font-semibold text-[#305399]">INVESTOR INSURANCE</span>, we believe that great insurance 
                 coverage shouldn't be complicated. Since our founding, we've been dedicated to providing comprehensive, 
                 affordable insurance solutions that protect what matters most to you.
               </p>

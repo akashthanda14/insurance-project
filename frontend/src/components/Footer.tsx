@@ -12,19 +12,16 @@ const Footer = () => {
             <h3 className="font-bold text-3xl mb-6">Insurance</h3>
             <ul className="space-y-4">
               <li>
-                <Link to="/insurance/auto" className="hover:text-orange-200 text-xl">Auto Insurance</Link>
+                <Link to="/insurance" className="hover:text-orange-200 text-xl">All Insurance</Link>
               </li>
               <li>
-                <Link to="/insurance/home" className="hover:text-orange-200 text-xl">Home Insurance</Link>
+                <Link to="/lifeinfo" className="hover:text-orange-200 text-xl">Life Insurance</Link>
               </li>
               <li>
-                <Link to="/insurance/business" className="hover:text-orange-200 text-xl">Business Insurance</Link>
+                <Link to="/travelinsuranceinfo" className="hover:text-orange-200 text-xl">Travel Insurance</Link>
               </li>
               <li>
-                <Link to="/insurance/life" className="hover:text-orange-200 text-xl">Life Insurance</Link>
-              </li>
-              <li>
-                <Link to="/insurance/travel" className="hover:text-orange-200 text-xl">Travel Insurance</Link>
+                <Link to="/healthDentalinfo" className="hover:text-orange-200 text-xl">Health & Dental</Link>
               </li>
             </ul>
           </div>
@@ -37,13 +34,7 @@ const Footer = () => {
                 <Link to="/about" className="hover:text-orange-200 text-xl">About Us</Link>
               </li>
               <li>
-                <Link to="/claims" className="hover:text-orange-200 text-xl">Claims</Link>
-              </li>
-              <li>
-                <Link to="/brokers" className="hover:text-orange-200 text-xl">Brokers</Link>
-              </li>
-              <li>
-                <Link to="/offices" className="hover:text-orange-200 text-xl">Offices</Link>
+                <Link to="/contact" className="hover:text-orange-200 text-xl">Contact</Link>
               </li>
             </ul>
           </div>
@@ -53,16 +44,19 @@ const Footer = () => {
             <h3 className="font-bold text-3xl mb-6">Resources</h3>
             <ul className="space-y-4">
               <li>
-                <Link to="/blog" className="hover:text-orange-200 text-xl">Blog</Link>
+                <Link to="/PremiumOptions" className="hover:text-orange-200 text-xl">Premium Option 1</Link>
               </li>
               <li>
-                <Link to="/news" className="hover:text-orange-200 text-xl">News</Link>
+                <Link to="/PremiumOptions2" className="hover:text-orange-200 text-xl">Premium Option 2</Link>
               </li>
               <li>
-                <Link to="/privacy" className="hover:text-orange-200 text-xl">Privacy Policy</Link>
+                <Link to="/Quoteform" className="hover:text-orange-200 text-xl">Quote Form</Link>
               </li>
               <li>
-                <Link to="/terms" className="hover:text-orange-200 text-xl">Terms of Service</Link>
+                <Link to="/Applicantform" className="hover:text-orange-200 text-xl">Applicant Form</Link>
+              </li>
+              <li>
+                <Link to="/Investment" className="hover:text-orange-200 text-xl">Investments</Link>
               </li>
             </ul>
           </div>
@@ -71,9 +65,8 @@ const Footer = () => {
           <div>
             <h3 className="font-bold text-3xl mb-6">Contact Us</h3>
             <p className="mb-6 text-xl">
-              123 Insurance Ave<br />
-              Toronto, ON M5V 2T6<br />
-              Canada
+              Mississauga, Ontario, Canada<br />
+              Area of Operation: All over Canada
             </p>
             <div className="flex space-x-6">
               <a href="#" className="hover:text-orange-200 text-2xl" aria-label="Facebook">
@@ -93,7 +86,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-white mt-12 pt-8 text-center">
-          <p className="text-2xl">&copy; {new Date().getFullYear()} Think Big Insurance. All rights reserved.</p>
+          <p className="text-2xl">&copy; {new Date().getFullYear()} INVESTOR INSURANCE. All rights reserved.</p>
         </div>
       </div>
     </footer>

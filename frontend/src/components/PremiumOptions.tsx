@@ -11,22 +11,26 @@ import {
   ChevronDown,
   Check,
   X,
-  Filter,
   Eye,
   ArrowRight
 } from "lucide-react";
 import type { PremiumOption } from "../types";
 
-const API_URL = "https://devweb.desttravel.com/api/visitorquote/premiumoptions";
-const AUTH_HEADER = "Basic c2hpa2hhLnNoYXJtYTo4diNGITJxUiR3OUB6TDF4";
+const API_URL =
+  "https://devweb.desttravel.com/api/visitorquote/premiumoptions";
+const AUTH_HEADER =
+  "Basic c2hpa2hhLnNoYXJtYTpjLUc2TDlEOW8hUSo="; 
+
+
 
 const defaultParams = {
-  applicationDate: "2025-01-20",
+  applicationDate: new Date().toISOString().slice(0, 10),    // today
   tripDays: 365,
   age: 25,
   familyPlan: false,
-  language: "EN",
+  language: "EN"
 };
+
 
 interface DeductibleOption {
   label: string;
@@ -51,7 +55,6 @@ export const PremiumOptions: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<PremiumOption[] | null>(null);
   const [selectedDeductible, setSelectedDeductible] = useState<keyof PremiumOption>("Deductible0");
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -288,36 +291,34 @@ export const PremiumOptions: React.FC = () => {
             </motion.div>
             
             {/* Enhanced Submit Button */}
-         {/* Enhanced Submit Button */}
-<div className="flex justify-center">
-  <motion.button
-    type="submit"
-    disabled={loading}
-    className={`w-full max-w-md lg:max-w-lg rounded-xl px-6 py-3 lg:px-8 lg:py-4 text-base lg:text-lg font-bold bg-gradient-to-r from-[#305399] to-[#253A66] text-white shadow-lg transition-all duration-200 ${
-      loading ? "opacity-50 cursor-not-allowed" : "hover:shadow-xl hover:from-[#253A66] hover:to-[#305399]"
-    }`}
-    whileTap={{ scale: 0.98 }}
-    whileHover={{ scale: loading ? 1 : 1.02 }}
-  >
-
-              {loading ? (
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex items-center justify-center gap-3"
-                >
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                  Loading Premium Options...
-                </motion.span>
-              ) : (
-                <span className="flex items-center justify-center gap-3">
-                  <Calculator size={24} />
-                  Calculate Premium Options
-                  <ArrowRight size={20} />
-                </span>
-              )}
-            </motion.button>
-</div>
+            <div className="flex justify-center">
+              <motion.button
+                type="submit"
+                disabled={loading}
+                className={`w-full max-w-md lg:max-w-lg rounded-xl px-6 py-3 lg:px-8 lg:py-4 text-base lg:text-lg font-bold bg-gradient-to-r from-[#305399] to-[#253A66] text-white shadow-lg transition-all duration-200 ${
+                  loading ? "opacity-50 cursor-not-allowed" : "hover:shadow-xl hover:from-[#253A66] hover:to-[#305399]"
+                }`}
+                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: loading ? 1 : 1.02 }}
+              >
+                {loading ? (
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-center justify-center gap-3"
+                  >
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                    Loading Premium Options...
+                  </motion.span>
+                ) : (
+                  <span className="flex items-center justify-center gap-3">
+                    <Calculator size={24} />
+                    Calculate Premium Options
+                    <ArrowRight size={20} />
+                  </span>
+                )}
+              </motion.button>
+            </div>
           </form>
         </motion.section>
 
@@ -353,39 +354,25 @@ export const PremiumOptions: React.FC = () => {
             >
               {/* Results Header */}
               <div className="bg-gradient-to-r from-[#305399] to-[#253A66] text-white rounded-2xl p-6 lg:p-8 shadow-xl">
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-                  <div className="flex items-center mb-4 lg:mb-0">
-                    <DollarSign className="mr-3" size={32} />
-                    <div>
-                      <h2 className="text-2xl lg:text-3xl font-bold">
-                        Available Premium Options
-                      </h2>
-                      <p className="text-blue-100 mt-1">
-                        {data.length} options found for your travel insurance needs
-                      </p>
-                    </div>
-                  </div>
-                  
-                  {/* Mobile Deductible Filter */}
-                  <div className="lg:hidden">
-                    <button
-                      onClick={() => setShowMobileFilters(!showMobileFilters)}
-                      className="flex items-center bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2 text-white font-medium"
-                    >
-                      <Filter className="mr-2" size={18} />
-                      Filter Deductible
-                      <ChevronDown className={`ml-2 transform transition-transform ${showMobileFilters ? 'rotate-180' : ''}`} size={16} />
-                    </button>
+                <div className="flex items-center mb-4">
+                  <DollarSign className="mr-3" size={32} />
+                  <div>
+                    <h2 className="text-2xl lg:text-3xl font-bold">
+                      Available Premium Options
+                    </h2>
+                    <p className="text-blue-100 mt-1">
+                      {data.length} options found for your travel insurance needs
+                    </p>
                   </div>
                 </div>
               </div>
 
-              {/* Desktop Deductible Selector */}
-              <div className="hidden lg:block bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+              {/* Single Deductible Selector at Top */}
+              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Select Deductible Amount</h3>
-                <div className="grid grid-cols-7 gap-2">
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
                   {deductibleOptions.map((option) => (
-                    <button
+                    <motion.button
                       key={option.value}
                       onClick={() => setSelectedDeductible(option.value)}
                       className={`relative p-3 rounded-lg border-2 transition-all duration-200 ${
@@ -393,6 +380,8 @@ export const PremiumOptions: React.FC = () => {
                           ? 'border-[#305399] bg-[#305399] text-white shadow-lg'
                           : 'border-gray-200 bg-gray-50 text-gray-700 hover:border-[#305399] hover:bg-blue-50'
                       }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
                       <div className="text-sm font-bold">{option.label}</div>
                       {option.popular && (
@@ -400,47 +389,10 @@ export const PremiumOptions: React.FC = () => {
                           Popular
                         </div>
                       )}
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               </div>
-
-              {/* Mobile Deductible Filter */}
-              <AnimatePresence>
-                {showMobileFilters && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="lg:hidden bg-white rounded-2xl shadow-lg p-4 border border-gray-100"
-                  >
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Select Deductible Amount</h3>
-                    <div className="grid grid-cols-2 gap-2">
-                      {deductibleOptions.map((option) => (
-                        <button
-                          key={option.value}
-                          onClick={() => {
-                            setSelectedDeductible(option.value);
-                            setShowMobileFilters(false);
-                          }}
-                          className={`relative p-3 rounded-lg border-2 transition-all duration-200 ${
-                            selectedDeductible === option.value
-                              ? 'border-[#305399] bg-[#305399] text-white shadow-lg'
-                              : 'border-gray-200 bg-gray-50 text-gray-700'
-                          }`}
-                        >
-                          <div className="text-sm font-bold">{option.label}</div>
-                          {option.popular && (
-                            <div className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs px-1 py-0.5 rounded-full">
-                              Popular
-                            </div>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
 
               {/* Mobile Cards View */}
               <div className="lg:hidden space-y-4">
@@ -491,33 +443,6 @@ export const PremiumOptions: React.FC = () => {
                           <span className="font-semibold ml-2">{formatCurrency(row.DailyRate)}</span>
                         </div>
                       </div>
-                      
-                      <button
-                        onClick={() => setExpandedRow(expandedRow === i ? null : i)}
-                        className="w-full mt-4 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-lg py-2 px-4 transition-colors duration-200"
-                      >
-                        <Eye className="mr-2" size={16} />
-                        {expandedRow === i ? 'Hide Details' : 'View All Deductibles'}
-                        <ChevronDown className={`ml-2 transform transition-transform ${expandedRow === i ? 'rotate-180' : ''}`} size={16} />
-                      </button>
-                      
-                      <AnimatePresence>
-                        {expandedRow === i && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="mt-4 space-y-2"
-                          >
-                            {deductibleOptions.map((option) => (
-                              <div key={option.value} className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded-lg">
-                                <span className="text-sm font-medium">{option.label} Deductible</span>
-                                <span className="font-bold text-[#305399]">{formatCurrency(row[option.value])}</span>
-                              </div>
-                            ))}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
                     </div>
                   </motion.div>
                 ))}
@@ -535,7 +460,7 @@ export const PremiumOptions: React.FC = () => {
                         <th className="px-6 py-4 text-left text-sm font-bold text-gray-800">Daily Rate</th>
                         <th className="px-6 py-4 text-left text-sm font-bold text-gray-800">Base Rate</th>
                         <th className="px-6 py-4 text-left text-sm font-bold text-gray-800">
-                          Selected Premium
+                          Premium
                           <div className="text-xs font-normal text-gray-600 mt-1">
                             {deductibleOptions.find(opt => opt.value === selectedDeductible)?.label} deductible
                           </div>

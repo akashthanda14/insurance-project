@@ -10,13 +10,13 @@ const MapComponent: React.FC = () => {
       }}
     >
       <iframe
-        title="St. Lawrence Market Map"
+        title="Mississauga, Ontario, Canada Map"
         width="100%"
         height="100%"
         style={{ border: 0 }}
         loading="lazy"
         allowFullScreen
-        src="https://www.google.com/maps?q=St.%20Lawrence%20Market%20Toronto&z=16&output=embed"
+        src="https://www.google.com/maps?q=Mississauga,%20Ontario,%20Canada&z=12&output=embed"
       ></iframe>
     </div>
   );
