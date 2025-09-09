@@ -9,12 +9,21 @@ import {
   ArrowRight,
   Info,
   MapPin,
-  Target,
-  HelpCircle,
-  BarChart3,
   Mail,
   Percent,
-  X
+  X,
+  Edit3,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Download,
+  Share2,
+  BarChart3,
+  AlertTriangle,
+  HelpCircle,
+  Settings,
+  Zap,
+  Target
 } from "lucide-react";
 import { useCalculatorServices } from '../hooks/useCalculatorServices';
 
@@ -24,16 +33,56 @@ interface FormErrors {
   general?: string;
 }
 
-// A simple switch component for the quick/detailed toggle
-const Switch = ({ checked, onChange }: { checked: boolean; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => (
-  <label className="relative inline-flex items-center cursor-pointer">
-    <input type="checkbox" checked={checked} onChange={onChange} className="sr-only peer" />
-    <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#305399]"></div>
-  </label>
-);
+interface ValidationStatus {
+  type: 'valid' | 'warning' | 'error';
+  message?: string;
+}
 
+interface Scenario {
+  name: string;
+  roi: number;
+  color: string;
+}
 
-// Optimized Range Input Component
+// Educational Tooltip Component
+const EducationalTooltip = React.memo(({ term, definition }: { term: string; definition: string }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return (
+    <div className="relative inline-block">
+      <button 
+        type="button"
+        className="text-blue-600 underline cursor-help inline-flex items-center"
+        onMouseEnter={() => setIsVisible(true)}
+        onMouseLeave={() => setIsVisible(false)}
+        onFocus={() => setIsVisible(true)}
+        onBlur={() => setIsVisible(false)}
+        aria-describedby="tooltip"
+      >
+        {term}
+        <HelpCircle size={12} className="ml-1" />
+      </button>
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div 
+            id="tooltip"
+            role="tooltip"
+            className="absolute bottom-full left-0 mb-2 w-64 p-3 bg-gray-800 text-white text-sm rounded-lg shadow-lg z-50"
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+          >
+            {definition}
+            <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+});
+
+// Enhanced Range Input with Full Accessibility
 const OptimizedRangeInput = React.memo(({ 
   label, 
   icon, 
@@ -46,7 +95,9 @@ const OptimizedRangeInput = React.memo(({
   additionalInfo = '',
   formatValue,
   disabled = false,
-  allowManualInput = true
+  allowManualInput = true,
+  validationStatus,
+  educationalContent
 }: {
   label: string;
   icon: React.ReactNode;
@@ -60,27 +111,21 @@ const OptimizedRangeInput = React.memo(({
   formatValue?: (value: number) => string;
   disabled?: boolean;
   allowManualInput?: boolean;
+  validationStatus?: ValidationStatus;
+  educationalContent?: { term: string; definition: string };
 }) => {
   const sliderRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [isManual, setIsManual] = useState(false);
-  const [inputVal, setInputVal] = useState(String(value));
-
-  const toggleManual = () => setIsManual(p => !p);
-
-  // Sync input value with prop value when not in manual mode
-  useEffect(() => {
-    if (!isManual) {
-      setInputVal(String(value));
-    }
-  }, [value, isManual]);
+  const [isManualInput, setIsManualInput] = useState(false);
+  const [inputValue, setInputValue] = useState<string>('');
+  const [inputError, setInputError] = useState<string>('');
+  const inputId = useRef(`input-${Math.random().toString(36).substr(2, 9)}`);
+  const descriptionId = useRef(`desc-${Math.random().toString(36).substr(2, 9)}`);
   
-  // Calculate progress percentage for visual feedback
   const progressPercentage = useMemo(() => {
     return ((value - min) / (max - min)) * 100;
   }, [value, min, max]);
 
-  // Handle all slider events for smooth operation
   const handleSliderChange = useCallback((newValue: number) => {
     const clampedValue = Math.max(min, Math.min(max, newValue));
     if (clampedValue !== value) {
@@ -89,170 +134,373 @@ const OptimizedRangeInput = React.memo(({
   }, [onChange, min, max, value]);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
     const newValue = parseFloat(e.target.value);
     if (!isNaN(newValue)) {
       handleSliderChange(newValue);
     }
   }, [handleSliderChange]);
 
-  const handleInputStart = useCallback(() => {
-    setIsDragging(true);
-  }, []);
+  const handleInputStart = useCallback(() => setIsDragging(true), []);
+  const handleInputEnd = useCallback(() => setIsDragging(false), []);
 
-  const handleInputEnd = useCallback(() => {
-    setIsDragging(false);
-  }, []);
+  const toggleManualInput = useCallback(() => {
+    if (isManualInput) {
+      const numValue = parseFloat(inputValue);
+      if (!isNaN(numValue) && numValue >= min && numValue <= max) {
+        handleSliderChange(numValue);
+        setInputError('');
+      } else {
+        setInputError(`Value must be between ${min} and ${max}`);
+        return;
+      }
+      setIsManualInput(false);
+    } else {
+      setInputValue(value.toString());
+      setIsManualInput(true);
+      setInputError('');
+    }
+  }, [isManualInput, inputValue, value, handleSliderChange, min, max]);
 
-  // Format display value
+  const handleManualInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setInputValue(newValue);
+    
+    const numValue = parseFloat(newValue);
+    if (newValue === '') {
+      setInputError('');
+    } else if (isNaN(numValue)) {
+      setInputError('Please enter a valid number');
+    } else if (numValue < min || numValue > max) {
+      setInputError(`Value must be between ${min} and ${max}`);
+    } else {
+      setInputError('');
+    }
+  }, [min, max]);
+
+  const handleManualInputSubmit = useCallback(() => {
+    const numValue = parseFloat(inputValue);
+    if (!isNaN(numValue) && numValue >= min && numValue <= max) {
+      handleSliderChange(numValue);
+      setIsManualInput(false);
+      setInputError('');
+    }
+  }, [inputValue, min, max, handleSliderChange]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (isManualInput) {
+        handleManualInputSubmit();
+      } else {
+        toggleManualInput();
+      }
+    } else if (e.key === 'Escape' && isManualInput) {
+      setInputValue(value.toString());
+      setIsManualInput(false);
+      setInputError('');
+    } else if (e.key === ' ' && !isManualInput) {
+      e.preventDefault();
+      toggleManualInput();
+    }
+  }, [isManualInput, handleManualInputSubmit, toggleManualInput, value]);
+
   const displayValue = useMemo(() => {
     return formatValue ? formatValue(value) : `${value}${unit}`;
   }, [value, unit, formatValue]);
 
-  // Dynamic slider track styling
-  const sliderStyle = useMemo(() => ({
-    background: `linear-gradient(to right, #305399 0%, #305399 ${progressPercentage}%, #e5e7eb ${progressPercentage}%, #e5e7eb 100%)`,
-  }), [progressPercentage]);
+  const getStatusColor = () => {
+    if (validationStatus?.type === 'error') return 'border-red-300 focus:ring-red-500';
+    if (validationStatus?.type === 'warning') return 'border-yellow-300 focus:ring-yellow-500';
+    return 'border-gray-300 focus:ring-[#305399] focus:border-[#305399]';
+  };
 
   return (
     <motion.div 
       className="space-y-3"
-      whileHover={{ scale: 1.005 }}
+      whileHover={{ scale: 1.002 }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
     >
-      <label className="flex items-center text-base lg:text-lg font-semibold text-gray-700">
+      <label 
+        htmlFor={inputId.current}
+        className="flex items-center text-base lg:text-lg font-semibold text-gray-700"
+      >
         {icon}
-        <span className="flex-1">{label}</span>
-        {isManual ? (
-          <input
-            type="number"
-            step={step}
-            min={min}
-            max={max}
-            value={inputVal}
-            onChange={e => setInputVal(e.target.value)}
-            onBlur={() => { const n = parseFloat(inputVal); if (!isNaN(n)) onChange(n); }}
-            className="w-28 text-right border-b border-gray-300 focus:outline-none focus:border-[#305399]"
-          />
-        ) : (
-          <span className={`font-bold text-[#305399] text-lg ${isDragging ? 'scale-110 transition-transform' : ''}`}>
-            {displayValue}
-          </span>
-        )}
-        {allowManualInput &&
-          <button
-            type="button"
-            onClick={toggleManual}
-            className="ml-2 text-sm text-[#305399] hover:underline"
-          >
-            {isManual ? 'Done' : 'Edit'}
-          </button>}
+        <span className="flex-1">
+          {label}
+          {educationalContent && (
+            <span className="ml-2">
+              <EducationalTooltip 
+                term={educationalContent.term} 
+                definition={educationalContent.definition} 
+              />
+            </span>
+          )}
+        </span>
+        <div className="flex items-center space-x-2">
+          {allowManualInput && !disabled && (
+            <motion.button
+              type="button"
+              onClick={toggleManualInput}
+              onKeyDown={handleKeyDown}
+              className={`p-2 rounded-lg transition-all duration-200 ${
+                isManualInput 
+                  ? 'bg-[#305399] text-white shadow-md' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-[#305399]'
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              title={isManualInput ? 'Switch to slider' : 'Enter manually'}
+              aria-label={isManualInput ? 'Switch to slider input' : 'Switch to manual input'}
+            >
+              {isManualInput ? <Check size={16} /> : <Edit3 size={16} />}
+            </motion.button>
+          )}
+          {isManualInput ? (
+            <div className="flex flex-col items-end">
+              <input
+                id={inputId.current}
+                type="number"
+                value={inputValue}
+                onChange={handleManualInputChange}
+                onBlur={handleManualInputSubmit}
+                onKeyDown={handleKeyDown}
+                min={min}
+                max={max}
+                step={step}
+                className={`w-28 px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 transition-all ${
+                  inputError 
+                    ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                    : getStatusColor()
+                }`}
+                autoFocus
+                placeholder={`${min}-${max}`}
+                aria-describedby={inputError ? `${inputId.current}-error` : descriptionId.current}
+                aria-invalid={!!inputError}
+              />
+              {inputError && (
+                <motion.span 
+                  id={`${inputId.current}-error`}
+                  role="alert"
+                  className="text-xs text-red-500 mt-1 max-w-28 text-right"
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  {inputError}
+                </motion.span>
+              )}
+            </div>
+          ) : (
+            <span className={`font-bold text-[#305399] text-lg min-w-20 text-right ${
+              isDragging ? 'scale-110 transition-transform' : ''
+            }`}>
+              {displayValue}
+            </span>
+          )}
+        </div>
       </label>
       
-      <div className="relative group">
-        {/* Custom slider track */}
-        <div className="relative h-4 bg-gray-200 rounded-full overflow-hidden">
+      {!isManualInput && (
+        <div className="relative group">
+          <div className="relative h-4 bg-gray-200 rounded-full overflow-hidden">
+            <div 
+              className="absolute top-0 left-0 h-full bg-gradient-to-r from-[#305399] to-[#4a6fad] rounded-full transition-all duration-150 ease-out"
+              style={{ width: `${progressPercentage}%` }}
+            />
+          </div>
+          
+          <input
+            id={inputId.current}
+            ref={sliderRef}
+            type="range"
+            min={min}
+            max={max}
+            step={step}
+            value={value}
+            onChange={handleInputChange}
+            onMouseDown={handleInputStart}
+            onMouseUp={handleInputEnd}
+            onTouchStart={handleInputStart}
+            onTouchEnd={handleInputEnd}
+            onKeyDown={handleKeyDown}
+            disabled={disabled}
+            className={`
+              absolute top-0 left-0 w-full h-4 opacity-0 cursor-pointer
+              focus:outline-none focus:ring-2 focus:ring-[#305399] focus:ring-offset-2
+              ${disabled ? 'cursor-not-allowed' : 'cursor-grab active:cursor-grabbing'}
+            `}
+            style={{ 
+              WebkitAppearance: 'none',
+              MozAppearance: 'none',
+              appearance: 'none'
+            }}
+            aria-label={`${label}. Current value: ${displayValue}. Range: ${formatValue ? formatValue(min) : min} to ${formatValue ? formatValue(max) : max}`}
+            aria-describedby={descriptionId.current}
+            aria-valuemin={min}
+            aria-valuemax={max}
+            aria-valuenow={value}
+            aria-valuetext={displayValue}
+          />
+          
           <div 
-            className="absolute top-0 left-0 h-full bg-gradient-to-r from-[#305399] to-[#4a6fad] rounded-full transition-all duration-150 ease-out"
-            style={{ width: `${progressPercentage}%` }}
+            className={`
+              absolute top-1/2 w-6 h-6 bg-white border-3 border-[#305399] rounded-full shadow-lg 
+              transform -translate-y-1/2 -translate-x-1/2 pointer-events-none transition-all duration-150
+              ${isDragging ? 'scale-125 shadow-xl border-[#254080]' : 'group-hover:scale-110'}
+              ${disabled ? 'bg-gray-300 border-gray-400' : ''}
+            `}
+            style={{ left: `${progressPercentage}%` }}
           />
         </div>
-        
-        {/* Actual input slider (invisible but functional) */}
-        <input
-          ref={sliderRef}
-          type="range"
-          min={min}
-          max={max}
-          step={step}
-          value={value}
-          onChange={handleInputChange}
-          onMouseDown={handleInputStart}
-          onMouseUp={handleInputEnd}
-          onTouchStart={handleInputStart}
-          onTouchEnd={handleInputEnd}
-          disabled={disabled}
-          className={`
-            absolute top-0 left-0 w-full h-4 opacity-0 cursor-pointer
-            focus:outline-none focus:ring-0
-            ${disabled ? 'cursor-not-allowed' : 'cursor-grab active:cursor-grabbing'}
-          `}
-          style={{ 
-            WebkitAppearance: 'none',
-            MozAppearance: 'none',
-            appearance: 'none'
-          }}
-        />
-        
-        {/* Custom thumb */}
-        <div 
-          className={`
-            absolute top-1/2 w-6 h-6 bg-white border-3 border-[#305399] rounded-full shadow-lg 
-            transform -translate-y-1/2 -translate-x-1/2 pointer-events-none transition-all duration-150
-            ${isDragging ? 'scale-125 shadow-xl border-[#254080]' : 'group-hover:scale-110'}
-            ${disabled ? 'bg-gray-300 border-gray-400' : ''}
-          `}
-          style={{ left: `${progressPercentage}%` }}
-        />
-      </div>
+      )}
       
-      {/* Min/Max labels */}
-      <div className="flex justify-between text-sm text-gray-500">
-        <span>{formatValue ? formatValue(min) : `${min}${unit}`}</span>
-        <span>{formatValue ? formatValue(max) : `${max}${unit}`}</span>
-      </div>
+      {!isManualInput && (
+        <div className="flex justify-between text-sm text-gray-500">
+          <span>{formatValue ? formatValue(min) : `${min}${unit}`}</span>
+          <span>{formatValue ? formatValue(max) : `${max}${unit}`}</span>
+        </div>
+      )}
+
+      {/* Validation Status */}
+      {validationStatus?.message && (
+        <motion.div 
+          className={`flex items-start p-3 rounded-lg border ${
+            validationStatus.type === 'error' 
+              ? 'bg-red-50 text-red-700 border-red-200' 
+              : validationStatus.type === 'warning'
+              ? 'bg-yellow-50 text-yellow-700 border-yellow-200'
+              : 'bg-blue-50 text-blue-700 border-blue-200'
+          }`}
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+        >
+          {validationStatus.type === 'warning' && <AlertTriangle size={16} className="mr-2 flex-shrink-0 mt-0.5" />}
+          {validationStatus.type === 'error' && <X size={16} className="mr-2 flex-shrink-0 mt-0.5" />}
+          {validationStatus.type === 'valid' && <Check size={16} className="mr-2 flex-shrink-0 mt-0.5" />}
+          <span className="text-sm">{validationStatus.message}</span>
+        </motion.div>
+      )}
       
       {additionalInfo && (
         <motion.p 
-          className="text-sm text-gray-600 bg-gray-50 p-2 rounded-lg"
+          id={descriptionId.current}
+          className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-200"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
         >
           {additionalInfo}
         </motion.p>
       )}
+      
+      {isManualInput && !inputError && (
+        <motion.div 
+          className="text-xs text-gray-500 bg-blue-50 p-2 rounded border border-blue-200"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          Ã°Å¸â€™Â¡ Press Enter to confirm, Escape to cancel. Valid range: {formatValue ? formatValue(min) : `${min}${unit}`} - {formatValue ? formatValue(max) : `${max}${unit}`}
+        </motion.div>
+      )}
     </motion.div>
   );
 });
 
+// Scenario Comparison Component
+const ScenarioComparison = React.memo(({ 
+  currentParams, 
+  formatCurrency 
+}: { 
+  currentParams: any; 
+  formatCurrency: (value: number) => string;
+}) => {
+  const scenarios: Scenario[] = [
+    { name: 'Conservative', roi: 3, color: 'text-green-600' },
+    { name: 'Moderate', roi: 5, color: 'text-blue-600' },
+    { name: 'Current', roi: currentParams.customROI, color: 'text-[#305399]' },
+    { name: 'Aggressive', roi: 8, color: 'text-red-600' }
+  ];
+
+  const calculateScenario = useCallback((roi: number) => {
+    const { timeHorizon, contributionAmount, initialTFSA, frequency } = currentParams;
+    const periodsPerYear = frequency === 'Monthly' ? 12 : frequency === 'Weekly' ? 52 : frequency === 'Every two weeks' ? 26 : 1;
+    const totalPeriods = timeHorizon * periodsPerYear;
+    const returnRate = roi / 100;
+    const periodRate = returnRate / periodsPerYear;
+
+    const existingFV = initialTFSA * Math.pow(1 + periodRate, totalPeriods);
+    let annuityFV = 0;
+    if (contributionAmount > 0 && periodRate > 0) {
+      annuityFV = contributionAmount * (Math.pow(1 + periodRate, totalPeriods) - 1) / periodRate;
+    } else if (contributionAmount > 0) {
+      annuityFV = contributionAmount * totalPeriods;
+    }
+
+    return existingFV + annuityFV;
+  }, [currentParams]);
+
+  return (
+    <motion.div 
+      className="mt-6 p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg border border-gray-200"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
+      <h4 className="font-semibold mb-3 flex items-center text-gray-800">
+        <BarChart3 className="mr-2" size={18} />
+        Scenario Comparison
+      </h4>
+      <div className="grid grid-cols-2 gap-3">
+        {scenarios.map(scenario => (
+          <div key={scenario.name} className="flex justify-between items-center py-2 px-3 bg-white rounded border">
+            <span className={`text-sm font-medium ${scenario.color}`}>
+              {scenario.name} ({scenario.roi}%)
+            </span>
+            <span className={`font-bold text-sm ${scenario.color}`}>
+              {formatCurrency(calculateScenario(scenario.roi))}
+            </span>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+});
+
+// Main Component
 export const TFSACalculator: React.FC = () => {
-  // Form state - optimized with proper typing
-  const [postalCode, setPostalCode] = useState<string>('');
-  const [annualIncome, setAnnualIncome] = useState<number>(50000);
+  // Form state
   const [timeHorizon, setTimeHorizon] = useState<number>(10);
-  const [knowProjectAmount, setKnowProjectAmount] = useState<string>('No');
-  const [frequency, setFrequency] = useState<string>('Monthly');
   const [contributionAmount, setContributionAmount] = useState<number>(200);
-  const [initialContribution, setInitialContribution] = useState<number>(0);
+  const [frequency, setFrequency] = useState<string>('Monthly');
+  const [initialTFSA, setInitialTFSA] = useState<number>(0);
+  const [postalCode, setPostalCode] = useState<string>('');
+  const [customROI, setCustomROI] = useState<number>(5.0);
   
-  // ROI state - simplified to just slider (same as RRSP)
-  const [customROI, setCustomROI] = useState<number>(5);
+  // UI state
+  const [setupMode, setSetupMode] = useState<'quick' | 'detailed'>('detailed');
+  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
+  const [showScenarios, setShowScenarios] = useState(false);
   
   // Email state
   const [userEmail, setUserEmail] = useState<string>('');
   const [showEmailModal, setShowEmailModal] = useState<boolean>(false);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
 
-  // UI state
-  const [quick, setQuick] = useState(true);
-
   // Results
-  const [tfsaAmount, setTfsaAmount] = useState<number>(0);
-  const [nonRegisteredAmount, setNonRegisteredAmount] = useState<number>(0);
+  const [totalSaved, setTotalSaved] = useState<number>(0);
   const [totalContributions, setTotalContributions] = useState<number>(0);
-  const [totalGrowth, setTotalGrowth] = useState<number>(0);
-  const [taxSheltered, setTaxSheltered] = useState<number>(0);
+  const [totalReturn, setTotalReturn] = useState<number>(0);
+  const [taxSavings, setTaxSavings] = useState<number>(0);
 
-  // Use calculator services hook
+  // Validation states
+  const [contributionValidation, setContributionValidation] = useState<ValidationStatus>({ type: 'valid' });
+
   const { emailStatus, isLoading, sendEmail, clearEmailStatus } = useCalculatorServices();
 
-  // Canadian TFSA Constants 2025 - memoized for performance
+  // Constants - Updated for TFSA
   const constants = useMemo(() => ({
-    TFSA_CONTRIBUTION_LIMIT_2025: 7000,
-    TFSA_TOTAL_ROOM_2025: 95000,
+    MAX_CONTRIBUTION_2025: 7000,
+    TOTAL_TFSA_ROOM: 95000,
     MARGINAL_TAX_RATE: 0.30,
-    MIN_ROI: 3,
-    MAX_ROI: 30
+    MIN_ROI: 0.1,
+    MAX_ROI: 30.0
   }), []);
 
   const frequencyOptions = useMemo(() => [
@@ -262,94 +510,119 @@ export const TFSACalculator: React.FC = () => {
     { value: 'Weekly', label: 'Weekly', periods: 52 }
   ], []);
 
-  // Memoized calculation functions for performance
+  // Load saved state from localStorage
+  useEffect(() => {
+    const savedState = localStorage.getItem('tfsaCalculatorState');
+    if (savedState) {
+      try {
+        const parsed = JSON.parse(savedState);
+        setTimeHorizon(parsed.timeHorizon || 10);
+        setContributionAmount(parsed.contributionAmount || 200);
+        setFrequency(parsed.frequency || 'Monthly');
+        setInitialTFSA(parsed.initialTFSA || 0);
+        setCustomROI(parsed.customROI || 5.0);
+        setPostalCode(parsed.postalCode || '');
+      } catch (error) {
+        console.error('Error loading saved state:', error);
+      }
+    }
+  }, []);
+
+  // Save state to localStorage
+  useEffect(() => {
+    const calculatorState = {
+      timeHorizon, contributionAmount, frequency, initialTFSA, customROI, postalCode
+    };
+    localStorage.setItem('tfsaCalculatorState', JSON.stringify(calculatorState));
+  }, [timeHorizon, contributionAmount, frequency, initialTFSA, customROI, postalCode]);
+
   const getPeriodsPerYear = useCallback(() => {
     return frequencyOptions.find(opt => opt.value === frequency)?.periods || 12;
   }, [frequency, frequencyOptions]);
 
-  // Canadian postal code validation
-  const validatePostalCode = useCallback((code: string): boolean => {
-    if (!code.trim()) return true;
-    const postalRegex = /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ ]?\d[ABCEGHJ-NPRSTV-Z]\d$/i;
-    return postalRegex.test(code.trim());
-  }, []);
-  
-  // Load state from localStorage on initial render
-  useEffect(() => {
-    const saved = localStorage.getItem('tfsaState');
-    if (saved) {
-      const s = JSON.parse(saved);
-      if (s.postalCode !== undefined) setPostalCode(s.postalCode);
-      if (s.annualIncome !== undefined) setAnnualIncome(s.annualIncome);
-      if (s.timeHorizon !== undefined) setTimeHorizon(s.timeHorizon);
-      if (s.frequency !== undefined) setFrequency(s.frequency);
-      if (s.contributionAmount !== undefined) setContributionAmount(s.contributionAmount);
-      if (s.initialContribution !== undefined) setInitialContribution(s.initialContribution);
-      if (s.customROI !== undefined) setCustomROI(s.customROI);
+  // TFSA Calculation - Main difference from RRSP
+  const calculateTFSAResults = useCallback(() => {
+    if (timeHorizon <= 0) {
+      setTotalSaved(0);
+      setTotalContributions(0);
+      setTotalReturn(0);
+      setTaxSavings(0);
+      return;
     }
-  }, []);
 
-  // Save state to localStorage whenever it changes
+    const periodsPerYear = getPeriodsPerYear();
+    const totalPeriods = timeHorizon * periodsPerYear;
+    const returnRate = customROI / 100;
+    const periodRate = returnRate / periodsPerYear;
+
+    // TFSA calculation (tax-free growth)
+    const existingFV = initialTFSA * Math.pow(1 + periodRate, totalPeriods);
+
+    let annuityFV = 0;
+    if (contributionAmount > 0 && periodRate > 0) {
+      annuityFV = contributionAmount * 
+        (Math.pow(1 + periodRate, totalPeriods) - 1) / periodRate;
+    } else if (contributionAmount > 0 && periodRate === 0) {
+      annuityFV = contributionAmount * totalPeriods;
+    }
+
+    const totalTFSA = existingFV + annuityFV;
+    const totalContrib = initialTFSA + (contributionAmount * totalPeriods);
+    const totalGrowth = totalTFSA - totalContrib;
+
+    // Calculate non-registered equivalent (taxable)
+    const taxableReturnRate = returnRate * (1 - constants.MARGINAL_TAX_RATE);
+    const taxablePeriodRate = taxableReturnRate / periodsPerYear;
+    
+    const taxableExistingFV = initialTFSA * Math.pow(1 + taxableReturnRate, timeHorizon);
+    let taxableAnnuityFV = 0;
+    if (contributionAmount > 0 && taxablePeriodRate > 0) {
+      taxableAnnuityFV = contributionAmount * 
+        (Math.pow(1 + taxablePeriodRate, totalPeriods) - 1) / taxablePeriodRate;
+    } else if (contributionAmount > 0) {
+      taxableAnnuityFV = contributionAmount * totalPeriods;
+    }
+
+    const totalTaxable = taxableExistingFV + taxableAnnuityFV;
+    const taxSavingsAmount = totalTFSA - totalTaxable;
+
+    setTotalSaved(Math.round(totalTFSA * 100) / 100);
+    setTotalContributions(Math.round(totalContrib * 100) / 100);
+    setTotalReturn(Math.round(totalGrowth * 100) / 100);
+    setTaxSavings(Math.round(Math.max(taxSavingsAmount, 0) * 100) / 100);
+  }, [timeHorizon, contributionAmount, frequency, initialTFSA, customROI, getPeriodsPerYear, constants.MARGINAL_TAX_RATE]);
+
+  // Contribution validation
+  const validateContribution = useCallback((amount: number, freq: string) => {
+    const periodsPerYear = frequencyOptions.find(opt => opt.value === freq)?.periods || 12;
+    const annualAmount = amount * periodsPerYear;
+    
+    if (annualAmount > constants.MAX_CONTRIBUTION_2025) {
+      setContributionValidation({
+        type: 'warning',
+        message: `Annual contribution ($${annualAmount.toLocaleString()}) exceeds 2025 TFSA limit ($${constants.MAX_CONTRIBUTION_2025.toLocaleString()}). Consider reducing contribution amount.`
+      });
+    } else if (annualAmount === 0) {
+      setContributionValidation({
+        type: 'error',
+        message: 'Contribution amount cannot be zero for meaningful projections.'
+      });
+    } else {
+      setContributionValidation({ type: 'valid' });
+    }
+  }, [constants.MAX_CONTRIBUTION_2025, frequencyOptions]);
+
+  // Debounced calculation
   useEffect(() => {
-    const state = {
-      postalCode,
-      annualIncome,
-      timeHorizon,
-      frequency,
-      contributionAmount,
-      initialContribution,
-      customROI
-    };
-    localStorage.setItem('tfsaState', JSON.stringify(state));
-  }, [postalCode, annualIncome, timeHorizon, frequency, contributionAmount, initialContribution, customROI]);
-
-
-  // TFSA vs Non-Registered Account Calculation - Enhanced with custom ROI
-  useEffect(() => {
-    const calculateResults = () => {
-      if (timeHorizon <= 0) {
-        setTfsaAmount(0);
-        setNonRegisteredAmount(0);
-        setTotalContributions(0);
-        setTotalGrowth(0);
-        setTaxSheltered(0);
-        return;
-      }
-
-      const periods = getPeriodsPerYear();
-      const totalPeriods = timeHorizon * periods;
-      const returnRate = customROI / 100; // Use custom ROI instead of fixed rate
-      const periodRate = returnRate / periods;
-      const nonRegPeriodRate = (returnRate * (1 - constants.MARGINAL_TAX_RATE)) / periods;
-
-      // Total contributions over time
-      const totalContrib = initialContribution + (contributionAmount * totalPeriods);
-      
-      // TFSA Future Value (tax-free growth)
-      const tfsaFutureValue = initialContribution * Math.pow(1 + periodRate, totalPeriods) +
-        contributionAmount * ((Math.pow(1 + periodRate, totalPeriods) - 1) / periodRate);
-
-      // Non-registered account (taxable growth)
-      const nonRegFutureValue = initialContribution * Math.pow(1 + nonRegPeriodRate, totalPeriods) +
-        contributionAmount * ((Math.pow(1 + nonRegPeriodRate, totalPeriods) - 1) / nonRegPeriodRate);
-
-      // Tax savings calculation
-      const tfsaGrowth = tfsaFutureValue - totalContrib;
-      const nonRegGrowth = nonRegFutureValue - totalContrib;
-      const taxSheltered = tfsaGrowth - nonRegGrowth;
-
-      setTfsaAmount(tfsaFutureValue);
-      setNonRegisteredAmount(nonRegFutureValue);
-      setTotalContributions(totalContrib);
-      setTotalGrowth(tfsaGrowth);
-      setTaxSheltered(taxSheltered);
-    };
-
-    const debounceTimer = setTimeout(calculateResults, 300);
+    const debounceTimer = setTimeout(calculateTFSAResults, 100);
     return () => clearTimeout(debounceTimer);
-  }, [timeHorizon, contributionAmount, frequency, initialContribution, customROI, getPeriodsPerYear, constants.MARGINAL_TAX_RATE]);
+  }, [calculateTFSAResults]);
 
-  // Memoized formatting functions
+  // Validate contribution when it changes
+  useEffect(() => {
+    validateContribution(contributionAmount, frequency);
+  }, [contributionAmount, frequency, validateContribution]);
+
   const formatCurrency = useCallback((value: number): string => {
     return new Intl.NumberFormat('en-CA', {
       style: 'currency',
@@ -359,16 +632,27 @@ export const TFSACalculator: React.FC = () => {
     }).format(value);
   }, []);
 
-  const formatNumber = useCallback((value: number): string => {
-    return new Intl.NumberFormat('en-CA').format(value);
+  const formatCurrencyNoDecimals = useCallback((value: number): string => {
+    return new Intl.NumberFormat('en-CA', {
+      style: 'currency',
+      currency: 'CAD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(value);
   }, []);
 
   const getProgressPercentage = useMemo(() => {
-    if (tfsaAmount === 0) return 0;
-    return Math.min((totalContributions / tfsaAmount) * 100, 100);
-  }, [tfsaAmount, totalContributions]);
+    if (totalSaved === 0) return 0;
+    return Math.min((totalContributions / totalSaved) * 100, 100);
+  }, [totalSaved, totalContributions]);
 
-  // Validation functions
+  // Canadian postal code validation
+  const validatePostalCode = useCallback((code: string): boolean => {
+    if (!code.trim()) return true;
+    const postalRegex = /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ ]?\d[ABCEGHJ-NPRSTV-Z]\d$/i;
+    return postalRegex.test(code.trim());
+  }, []);
+
   const validateEmail = useCallback((email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -387,7 +671,7 @@ export const TFSACalculator: React.FC = () => {
     return Object.keys(errors).length === 0;
   }, [userEmail, validateEmail]);
 
-  // Event handlers - optimized with useCallback
+  // Event handlers
   const handlePostalCodeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toUpperCase();
     setPostalCode(value);
@@ -408,28 +692,92 @@ export const TFSACalculator: React.FC = () => {
     }
   }, [formErrors.email]);
 
-  // Email Handler
+  const handleInitialTFSAChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '') {
+      setInitialTFSA(0);
+    } else {
+      const numValue = parseFloat(value);
+      if (!isNaN(numValue) && numValue >= 0) {
+        setInitialTFSA(Math.round(numValue * 100) / 100);
+      }
+    }
+  }, []);
+
+  // PDF Export functionality
+  const exportToPDF = useCallback(() => {
+    const printContent = `
+      TFSA Calculation Results
+      
+      Investment Parameters:
+      - Time Horizon: ${timeHorizon} years
+      - Annual Return Rate: ${customROI}%
+      - Contribution Amount: ${formatCurrency(contributionAmount)} ${frequency.toLowerCase()}
+      - Current TFSA Balance: ${formatCurrency(initialTFSA)}
+      
+      Results:
+      - Total TFSA Savings: ${formatCurrency(totalSaved)}
+      - Your Total Contributions: ${formatCurrency(totalContributions)}
+      - Investment Growth: ${formatCurrency(totalReturn)}
+      - Tax Savings vs Non-Registered: ${formatCurrency(taxSavings)}
+      
+      Generated on: ${new Date().toLocaleDateString()}
+    `;
+    
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+          <head><title>TFSA Calculation Results</title></head>
+          <body style="font-family: Arial, sans-serif; padding: 20px; line-height: 1.6;">
+            <pre style="white-space: pre-wrap;">${printContent}</pre>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.print();
+    }
+  }, [timeHorizon, customROI, contributionAmount, frequency, initialTFSA, totalSaved, totalContributions, totalReturn, taxSavings, formatCurrency]);
+
+  // Share functionality
+  const shareResults = useCallback(() => {
+    const shareText = `I calculated my TFSA savings: ${formatCurrency(totalSaved)} over ${timeHorizon} years with ${formatCurrency(taxSavings)} in tax savings!`;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: 'My TFSA Calculation Results',
+        text: shareText,
+        url: window.location.href
+      }).catch(console.error);
+    } else {
+      navigator.clipboard.writeText(shareText).then(() => {
+        alert('Results copied to clipboard!');
+      }).catch(() => {
+        alert('Unable to share. Please copy the URL manually.');
+      });
+    }
+  }, [totalSaved, timeHorizon, taxSavings, formatCurrency]);
+
   const handleSendEmail = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (!validateForm()) return;
 
     const results = {
-      totalAmount: tfsaAmount,
+      totalAmount: totalSaved,
       contributions: totalContributions,
-      returns: totalGrowth,
+      returns: totalReturn,
       roiRate: customROI,
-      taxSheltered: taxSheltered
+      taxSavings: taxSavings
     };
 
     const inputs = {
       timeHorizon,
       contributionFrequency: frequency,
       contributionAmount,
-      initialContribution,
+      initialTFSA,
       customROI,
-      postalCode: postalCode || 'Not provided',
-      annualIncome
+      postalCode: postalCode || 'Not provided'
     };
 
     await sendEmail(userEmail, 'TFSA', results, inputs, true);
@@ -439,9 +787,8 @@ export const TFSACalculator: React.FC = () => {
       setUserEmail('');
       setFormErrors({});
     }
-  }, [validateForm, tfsaAmount, totalContributions, totalGrowth, customROI, taxSheltered, timeHorizon, frequency, contributionAmount, initialContribution, postalCode, annualIncome, userEmail, sendEmail, emailStatus.type]);
+  }, [validateForm, totalSaved, totalContributions, totalReturn, customROI, taxSavings, timeHorizon, frequency, contributionAmount, initialTFSA, postalCode, userEmail, sendEmail, emailStatus.type]);
 
-  // Modal handlers
   const openEmailModal = useCallback(() => {
     setShowEmailModal(true);
     clearEmailStatus();
@@ -453,12 +800,6 @@ export const TFSACalculator: React.FC = () => {
     setFormErrors({});
     clearEmailStatus();
   }, [clearEmailStatus]);
-
-  const getChartHeight = useCallback((amount: number, maxAmount: number) => {
-    return Math.max((amount / maxAmount) * 200, 10);
-  }, []);
-
-  const maxAmount = useMemo(() => Math.max(tfsaAmount, nonRegisteredAmount), [tfsaAmount, nonRegisteredAmount]);
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 font-['Inter','sans-serif']">
@@ -487,14 +828,43 @@ export const TFSACalculator: React.FC = () => {
             TFSA Calculator
           </h1>
           
-          <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-4 leading-relaxed">
-            Calculate how much you need to save in a tax-free savings account (TFSA) to reach your goals. 
-            You'll get an illustration of savings growth and a comparison of returns between investing in a TFSA and investing in a non-registered account.
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-6">
+            Calculate your tax-free savings account growth with personalized projections, tax savings analysis, and accessibility features.
           </p>
+
+          {/* Mode Toggle */}
+          <div className="flex justify-center space-x-4 mb-6">
+            <motion.button
+              onClick={() => setSetupMode('quick')}
+              className={`px-6 py-2 rounded-full font-medium transition-all ${
+                setupMode === 'quick' 
+                  ? 'bg-[#305399] text-white shadow-lg' 
+                  : 'bg-white text-gray-600 hover:bg-gray-100'
+              }`}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Zap className="inline mr-2" size={16} />
+              Lumpsum
+            </motion.button>
+            <motion.button
+              onClick={() => setSetupMode('detailed')}
+              className={`px-6 py-2 rounded-full font-medium transition-all ${
+                setupMode === 'detailed' 
+                  ? 'bg-[#305399] text-white shadow-lg' 
+                  : 'bg-white text-gray-600 hover:bg-gray-100'
+              }`}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Settings className="inline mr-2" size={16} />
+              Detailed Setup
+            </motion.button>
+          </div>
         </motion.header>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
-          {/* Input Form - Enhanced */}
+          {/* Input Form */}
           <motion.div
             className="xl:col-span-2 bg-white rounded-2xl shadow-xl p-6 lg:p-8 border border-gray-100"
             initial={{ opacity: 0, x: -20 }}
@@ -502,203 +872,259 @@ export const TFSACalculator: React.FC = () => {
             transition={{ duration: 0.4 }}
           >
             <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
-              {/* Quick / Detailed Toggle */}
-              <div className="flex items-center mb-6">
-                <span className="mr-3 font-medium text-gray-700">Quick setup</span>
-                <Switch checked={!quick} onChange={e => setQuick(!e.target.checked)} />
-                <span className="ml-3 font-medium text-gray-700">Detailed</span>
-              </div>
-              
-              {/* Personal Information Section */}
-              <div className="space-y-6">
-                <h3 className="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2">
-                  Personal Information
-                </h3>
-                
-                {/* Annual Income */}
-                {!quick && (
-                  <OptimizedRangeInput
-                    label="Annual Income"
-                    icon={<TrendingUp className="mr-3 text-[#305399]" size={20} />}
-                    value={annualIncome}
-                    onChange={setAnnualIncome}
-                    min={20000}
-                    max={200000}
-                    step={1000}
-                    formatValue={formatCurrency}
-                    additionalInfo="Used for tax calculation purposes"
-                  />
-                )}
-
-                {/* Postal Code with Enhanced Validation */}
-                <motion.div className="space-y-3">
-                  <label className="flex items-center text-lg font-semibold text-gray-700">
-                    <MapPin className="mr-3 text-[#305399]" size={20} />
-                    Canadian Postal Code (Optional)
-                  </label>
-                  <input
-                    type="text"
-                    value={postalCode}
-                    onChange={handlePostalCodeChange}
-                    maxLength={7}
-                    className={`w-full px-4 py-4 text-lg border-2 rounded-xl focus:outline-none focus:ring-3 transition-all duration-200 bg-white ${
-                      formErrors.postalCode
-                        ? 'border-red-300 focus:ring-red-500/20 focus:border-red-500'
-                        : 'border-gray-300 focus:ring-[#305399]/20 focus:border-[#305399]'
-                    }`}
-                    placeholder="K1A 0A6"
-                  />
-                  {formErrors.postalCode && (
-                    <motion.p
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-red-600 text-sm flex items-center"
-                    >
-                      <X size={16} className="mr-1" />
-                      {formErrors.postalCode}
-                    </motion.p>
-                  )}
-                </motion.div>
-              </div>
-
-              {/* Investment Parameters Section */}
-              <div className="space-y-6">
-                <h3 className="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2">
-                  Investment Parameters
-                </h3>
-                
-                {/* Time Horizon */}
-                <OptimizedRangeInput
-                  label="Time Horizon for Your Project"
-                  icon={<Calendar className="mr-3 text-[#305399]" size={20} />}
-                  value={timeHorizon}
-                  onChange={setTimeHorizon}
-                  min={1}
-                  max={40}
-                  unit=" years"
-                  additionalInfo={`Investment period: ${timeHorizon} years`}
-                />
-
-                {/* ROI Section - Enhanced with gradient background */}
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200">
-                  <OptimizedRangeInput
-                    label="Annual Return Rate (ROI)"
-                    icon={<Percent className="mr-3 text-[#305399]" size={20} />}
-                    value={customROI}
-                    onChange={setCustomROI}
-                    min={constants.MIN_ROI}
-                    max={constants.MAX_ROI}
-                    step={0.1}
-                    unit="%"
-                    additionalInfo="Historical market returns typically range from 3% to 12%. Conservative estimate: 3-5%, Moderate: 5-8%, Aggressive: 8-12%"
-                  />
-                </div>
-              </div>
-
-              {/* Contribution Details Section */}
-              <div className="space-y-6">
-                <h3 className="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2">
-                  Contribution Details
-                </h3>
-
-                {/* Project Amount Knowledge */}
-                <motion.div className="space-y-3">
-                  <label className="flex items-center text-lg font-semibold text-gray-700">
-                    <HelpCircle className="mr-3 text-[#305399]" size={20} />
-                    Do you know the amount you need for your project?
-                  </label>
-                  <div className="grid grid-cols-2 gap-4">
-                    {['Yes', 'No'].map((option) => (
-                      <motion.button
-                        key={option}
-                        type="button"
-                        onClick={() => setKnowProjectAmount(option)}
-                        className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
-                          knowProjectAmount === option
-                            ? 'bg-[#305399] text-white shadow-lg'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        {option}
-                      </motion.button>
-                    ))}
+              {/* Quick Setup Mode */}
+              {setupMode === 'quick' && (
+                <motion.div 
+                  className="space-y-6"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-bold text-gray-800">Quick Setup</h3>
                   </div>
+                  
+                  <OptimizedRangeInput
+                    label="Time Horizon"
+                    icon={<Calendar className="mr-3 text-[#305399]" size={20} />}
+                    value={timeHorizon}
+                    onChange={setTimeHorizon}
+                    min={1}
+                    max={40}
+                    unit=" years"
+                    allowManualInput={true}
+                  />
+
+                  <OptimizedRangeInput
+                    label="Monthly Contribution"
+                    icon={<DollarSign className="mr-3 text-[#305399]" size={20} />}
+                    value={contributionAmount}
+                    onChange={setContributionAmount}
+                    min={0}
+                    max={2500}
+                    step={25}
+                    formatValue={formatCurrencyNoDecimals}
+                    validationStatus={contributionValidation}
+                    allowManualInput={true}
+                  />
                 </motion.div>
+              )}
 
-                {/* Regular Contribution Amount */}
-                <OptimizedRangeInput
-                  label="Amount of Your Contribution"
-                  icon={<DollarSign className="mr-3 text-[#305399]" size={20} />}
-                  value={contributionAmount}
-                  onChange={setContributionAmount}
-                  min={0}
-                  max={1000}
-                  step={25}
-                  formatValue={formatCurrency}
-                  additionalInfo={`Annual total: ${formatCurrency(contributionAmount * getPeriodsPerYear())}`}
-                />
+              {/* Detailed Setup Mode */}
+              {setupMode === 'detailed' && (
+                <motion.div 
+                  className="space-y-8"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  {/* Investment Parameters */}
+                  <div className="space-y-6">
+                    <h3 className="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2">
+                      Investment Parameters
+                    </h3>
+                    
+                    <OptimizedRangeInput
+                      label="Time Horizon"
+                      icon={<Calendar className="mr-3 text-[#305399]" size={20} />}
+                      value={timeHorizon}
+                      onChange={setTimeHorizon}
+                      min={1}
+                      max={40}
+                      unit=" years"
+                      additionalInfo={`Investment period: ${timeHorizon} years`}
+                      allowManualInput={true}
+                      educationalContent={{
+                        term: "Time horizon",
+                        definition: "The length of time you plan to invest. Longer time horizons allow for potentially higher returns and better compound growth."
+                      }}
+                    />
 
-                {/* Frequency Selection */}
-                <motion.div className="space-y-3">
-                  <label className="flex items-center text-lg font-semibold text-gray-700">
-                    <Calculator className="mr-3 text-[#305399]" size={20} />
-                    Frequency of Contributions
-                  </label>
-                  <div className="grid grid-cols-2 gap-3">
-                    {frequencyOptions.map((option) => (
-                      <motion.label 
-                        key={option.value} 
-                        className={`flex items-center cursor-pointer p-4 rounded-xl transition-all duration-200 border-2 ${
-                          frequency === option.value 
-                            ? 'border-[#305399] bg-blue-50 shadow-md' 
-                            : 'border-gray-200 bg-gray-50 hover:bg-gray-100'
-                        }`}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <input
-                          type="radio"
-                          name="frequency"
-                          value={option.value}
-                          checked={frequency === option.value}
-                          onChange={(e) => setFrequency(e.target.value)}
-                          className="w-4 h-4 text-[#305399] border-2 focus:ring-[#305399]"
-                        />
-                        <span className={`ml-3 font-medium ${
-                          frequency === option.value ? 'text-[#305399]' : 'text-gray-700'
-                        }`}>
-                          {option.label}
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200">
+                      <OptimizedRangeInput
+                        label="Annual Return Rate (ROI)"
+                        icon={<Percent className="mr-3 text-[#305399]" size={20} />}
+                        value={customROI}
+                        onChange={setCustomROI}
+                        min={constants.MIN_ROI}
+                        max={constants.MAX_ROI}
+                        step={0.1}
+                        unit="%"
+                        additionalInfo="Historical market returns typically range from 3% to 12%. Conservative: 3-5%, Moderate: 5-8%, Aggressive: 8-12%"
+                        allowManualInput={true}
+                        educationalContent={{
+                          term: "Expected returns",
+                          definition: "This is your expected average annual return. Historical stock market returns have averaged 6-10%, but past performance doesn't guarantee future results. Consider your risk tolerance."
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Contribution Details */}
+                  <div className="space-y-6">
+                    <h3 className="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2">
+                      Contribution Details
+                    </h3>
+                    
+                    <OptimizedRangeInput
+                      label="Regular Contribution Amount"
+                      icon={<DollarSign className="mr-3 text-[#305399]" size={20} />}
+                      value={contributionAmount}
+                      onChange={setContributionAmount}
+                      min={0}
+                      max={10000}
+                      step={25}
+                      formatValue={formatCurrencyNoDecimals}
+                      additionalInfo={`Annual total: ${formatCurrencyNoDecimals(contributionAmount * getPeriodsPerYear())}`}
+                      validationStatus={contributionValidation}
+                      allowManualInput={true}
+                      educationalContent={{
+                        term: "Regular contributions",
+                        definition: "Consistent contributions take advantage of dollar-cost averaging and compound growth. Even small amounts can grow significantly over time."
+                      }}
+                    />
+
+                    {/* Frequency Selection */}
+                    <motion.div className="space-y-3">
+                      <label className="flex items-center text-lg font-semibold text-gray-700">
+                        <Calculator className="mr-3 text-[#305399]" size={20} />
+                        Contribution Frequency
+                        <span className="ml-2">
+                          <EducationalTooltip 
+                            term="Why frequency matters?" 
+                            definition="More frequent contributions can slightly increase returns due to earlier investment of funds, but the difference is usually small compared to the total amount contributed." 
+                          />
                         </span>
-                      </motion.label>
-                    ))}
+                      </label>
+                      <div className="grid grid-cols-2 gap-3">
+                        {frequencyOptions.map((option) => (
+                          <motion.label 
+                            key={option.value} 
+                            className={`flex items-center cursor-pointer p-4 rounded-xl transition-all duration-200 border-2 ${
+                              frequency === option.value 
+                                ? 'border-[#305399] bg-blue-50 shadow-md' 
+                                : 'border-gray-200 bg-gray-50 hover:bg-gray-100'
+                            }`}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            <input
+                              type="radio"
+                              name="frequency"
+                              value={option.value}
+                              checked={frequency === option.value}
+                              onChange={(e) => setFrequency(e.target.value)}
+                              className="w-4 h-4 text-[#305399] border-2 focus:ring-[#305399]"
+                            />
+                            <span className={`ml-3 font-medium ${
+                              frequency === option.value ? 'text-[#305399]' : 'text-gray-700'
+                            }`}>
+                              {option.label}
+                            </span>
+                          </motion.label>
+                        ))}
+                      </div>
+                    </motion.div>
+
+                    {/* Current TFSA Balance */}
+                    <motion.div className="space-y-3">
+                      <label className="flex items-center text-lg font-semibold text-gray-700">
+                        <PiggyBank className="mr-3 text-[#305399]" size={20} />
+                        Current TFSA Balance
+                        <span className="ml-2">
+                          <EducationalTooltip 
+                            term="Existing balance" 
+                            definition="Your current TFSA balance will continue to grow through compound interest tax-free. Even small existing balances can make a significant difference over time." 
+                          />
+                        </span>
+                      </label>
+                      <div className="relative">
+                        <DollarSign className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" size={20} />
+                        <input
+                          type="number"
+                          value={initialTFSA === 0 ? '' : initialTFSA}
+                          onChange={handleInitialTFSAChange}
+                          min="0"
+                          step="0.01"
+                          className="w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-3 focus:ring-[#305399]/20 focus:border-[#305399] transition-all duration-200 bg-white"
+                          placeholder="Enter current TFSA balance"
+                          aria-label="Current TFSA balance in Canadian dollars"
+                        />
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        Enter your existing TFSA balance to see how it will grow alongside your contributions.
+                      </p>
+                    </motion.div>
+
+                    {/* Advanced Options */}
+                    <motion.div className="space-y-4">
+                      <button
+                        type="button"
+                        onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
+                        className="flex items-center text-blue-600 hover:text-blue-800 font-medium"
+                        aria-expanded={showAdvancedOptions}
+                      >
+                        {showAdvancedOptions ? <ChevronUp className="mr-1" /> : <ChevronDown className="mr-1" />}
+                        Advanced Options
+                      </button>
+                      
+                      <AnimatePresence>
+                        {showAdvancedOptions && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            {/* Postal Code */}
+                            <motion.div className="space-y-3 pt-4">
+                              <label className="flex items-center text-lg font-semibold text-gray-700">
+                                <MapPin className="mr-3 text-[#305399]" size={20} />
+                                Canadian Postal Code (Optional)
+                              </label>
+                              <input
+                                type="text"
+                                value={postalCode}
+                                onChange={handlePostalCodeChange}
+                                maxLength={7}
+                                className={`w-full px-4 py-4 text-lg border-2 rounded-xl focus:outline-none focus:ring-3 transition-all duration-200 bg-white ${
+                                  formErrors.postalCode
+                                    ? 'border-red-300 focus:ring-red-500/20 focus:border-red-500'
+                                    : 'border-gray-300 focus:ring-[#305399]/20 focus:border-[#305399]'
+                                }`}
+                                placeholder="K1A 0A6"
+                                aria-label="Canadian postal code"
+                                aria-describedby={formErrors.postalCode ? 'postal-code-error' : undefined}
+                              />
+                              {formErrors.postalCode && (
+                                <motion.p
+                                  id="postal-code-error"
+                                  role="alert"
+                                  initial={{ opacity: 0, y: -10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  className="text-red-600 text-sm flex items-center"
+                                >
+                                  <X size={16} className="mr-1" />
+                                  {formErrors.postalCode}
+                                </motion.p>
+                              )}
+                            </motion.div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
                   </div>
                 </motion.div>
-
-                {/* Initial Contribution */}
-                <OptimizedRangeInput
-                  label="Contribution You Wish to Make Right Now"
-                  icon={<PiggyBank className="mr-3 text-[#305399]" size={20} />}
-                  value={initialContribution}
-                  onChange={setInitialContribution}
-                  min={0}
-                  max={10000}
-                  step={100}
-                  formatValue={formatCurrency}
-                />
-              </div>
+              )}
             </form>
           </motion.div>
 
-          {/* Results Panel - Enhanced */}
+          {/* Results Panel */}
           <motion.div
             className="bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-xl p-6 lg:p-8 border border-gray-100 flex flex-col"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.1 }}
           >
-            {/* Header */}
+            {/* Total Saved */}
             <div className="text-center mb-8">
               <motion.p 
                 className="text-gray-600 text-lg mb-2"
@@ -706,7 +1132,7 @@ export const TFSACalculator: React.FC = () => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                Your TFSA Savings Results
+                TFSA Savings in {timeHorizon} Years
               </motion.p>
               <motion.div 
                 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-[#305399] to-[#4a6fad] bg-clip-text text-transparent"
@@ -714,14 +1140,14 @@ export const TFSACalculator: React.FC = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
               >
-                {formatCurrency(tfsaAmount)}
+                {formatCurrency(totalSaved)}
               </motion.div>
               <div className="text-sm text-gray-500 mt-2">
                 Using {customROI}% annual return over {timeHorizon} years
               </div>
             </div>
 
-            {/* Enhanced Progress Visualization */}
+            {/* Progress Visualization */}
             <div className="relative w-40 h-40 mx-auto mb-8">
               <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
                 <defs>
@@ -779,62 +1205,7 @@ export const TFSACalculator: React.FC = () => {
               </div>
             </div>
 
-            {/* Comparison Chart */}
-            <div className="mb-6">
-              <div className="flex justify-center items-end space-x-8 mb-4" style={{ height: '220px' }}>
-                {/* TFSA Bar */}
-                <motion.div 
-                  className="flex flex-col items-center"
-                  initial={{ height: 0 }}
-                  animate={{ height: 'auto' }}
-                  transition={{ delay: 0.8, duration: 1 }}
-                >
-                  <motion.div
-                    className="bg-[#305399] rounded-t-lg flex items-end justify-center text-white text-xs font-bold relative"
-                    style={{ 
-                      width: '60px', 
-                      height: `${getChartHeight(tfsaAmount, maxAmount)}px`,
-                      minHeight: '40px'
-                    }}
-                    initial={{ height: 0 }}
-                    animate={{ height: `${getChartHeight(tfsaAmount, maxAmount)}px` }}
-                    transition={{ delay: 1, duration: 0.8 }}
-                  >
-                    <div className="absolute -top-6 text-[#305399] text-xs font-bold whitespace-nowrap">
-                      {formatCurrency(tfsaAmount)}
-                    </div>
-                  </motion.div>
-                  <div className="text-xs text-gray-600 mt-2 text-center">TFSA</div>
-                </motion.div>
-
-                {/* Non-registered Bar */}
-                <motion.div 
-                  className="flex flex-col items-center"
-                  initial={{ height: 0 }}
-                  animate={{ height: 'auto' }}
-                  transition={{ delay: 1.2, duration: 1 }}
-                >
-                  <motion.div
-                    className="bg-[#60a5fa] rounded-t-lg flex items-end justify-center text-white text-xs font-bold relative"
-                    style={{ 
-                      width: '60px', 
-                      height: `${getChartHeight(nonRegisteredAmount, maxAmount)}px`,
-                      minHeight: '40px'
-                    }}
-                    initial={{ height: 0 }}
-                    animate={{ height: `${getChartHeight(nonRegisteredAmount, maxAmount)}px` }}
-                    transition={{ delay: 1.4, duration: 0.8 }}
-                  >
-                    <div className="absolute -top-6 text-[#60a5fa] text-xs font-bold whitespace-nowrap">
-                      {formatCurrency(nonRegisteredAmount)}
-                    </div>
-                  </motion.div>
-                  <div className="text-xs text-gray-600 mt-2 text-center">Non-registered</div>
-                </motion.div>
-              </div>
-            </div>
-
-            {/* Breakdown - Enhanced */}
+            {/* Breakdown */}
             <div className="space-y-4 mb-8">
               <div className="flex justify-between items-center p-4 bg-gradient-to-r from-[#305399]/10 to-transparent rounded-lg">
                 <div className="flex items-center">
@@ -849,23 +1220,45 @@ export const TFSACalculator: React.FC = () => {
                   <div className="w-4 h-4 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full mr-3"></div>
                   <span className="text-gray-700 font-medium">Investment Growth</span>
                 </div>
-                <span className="font-bold text-blue-500">{formatCurrency(totalGrowth)}</span>
+                <span className="font-bold text-blue-500">{formatCurrency(totalReturn)}</span>
               </div>
-              
+
               <div className="flex justify-between items-center p-4 bg-gradient-to-r from-green-100/50 to-transparent rounded-lg">
                 <div className="flex items-center">
                   <div className="w-4 h-4 bg-gradient-to-r from-green-400 to-green-500 rounded-full mr-3"></div>
                   <span className="text-gray-700 font-medium">Tax Savings Advantage</span>
                 </div>
-                <span className="font-bold text-green-600">{formatCurrency(Math.max(taxSheltered, 0))}</span>
+                <span className="font-bold text-green-500">{formatCurrency(taxSavings)}</span>
               </div>
             </div>
+
+            {/* Scenario Comparison Toggle */}
+            <motion.button
+              onClick={() => setShowScenarios(!showScenarios)}
+              className="w-full mb-4 p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors flex items-center justify-center"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <BarChart3 className="mr-2" size={18} />
+              {showScenarios ? 'Hide' : 'Show'} Scenario Comparison
+            </motion.button>
+
+            <AnimatePresence>
+              {showScenarios && (
+                <ScenarioComparison 
+                  currentParams={{ 
+                    timeHorizon, contributionAmount, initialTFSA, frequency, customROI 
+                  }}
+                  formatCurrency={formatCurrency}
+                />
+              )}
+            </AnimatePresence>
 
             {/* Total */}
             <div className="border-t-2 border-gray-200 pt-6 mb-8">
               <div className="flex justify-between items-center text-xl font-bold bg-gradient-to-r from-gray-50 to-blue-50 p-4 rounded-lg">
-                <span className="text-gray-800">Total TFSA Value</span>
-                <span className="text-gray-800">{formatCurrency(tfsaAmount)}</span>
+                <span className="text-gray-800">Total TFSA Savings</span>
+                <span className="text-gray-800">{formatCurrency(totalSaved)}</span>
               </div>
             </div>
 
@@ -881,6 +1274,28 @@ export const TFSACalculator: React.FC = () => {
                 <Mail size={20} />
                 Email Results
               </motion.button>
+
+              <div className="grid grid-cols-2 gap-3">
+                <motion.button
+                  onClick={exportToPDF}
+                  className="px-4 py-3 border-2 border-[#305399] text-[#305399] font-semibold rounded-xl hover:bg-[#305399] hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Download size={16} />
+                  Export
+                </motion.button>
+                
+                <motion.button
+                  onClick={shareResults}
+                  className="px-4 py-3 border-2 border-[#305399] text-[#305399] font-semibold rounded-xl hover:bg-[#305399] hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Share2 size={16} />
+                  Share
+                </motion.button>
+              </div>
               
               <motion.button
                 className="w-full border-2 border-[#305399] text-[#305399] font-bold py-4 rounded-xl hover:bg-[#305399] hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
@@ -913,26 +1328,33 @@ export const TFSACalculator: React.FC = () => {
           transition={{ delay: 0.8, duration: 0.4 }}
         >
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 p-8 rounded-2xl max-w-5xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div>
                 <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
                   <PiggyBank className="mr-2 text-[#305399]" size={24} />
                   2025 TFSA Limits
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  The annual TFSA contribution limit for 2025 is <span className="font-bold text-[#305399]">${constants.TFSA_CONTRIBUTION_LIMIT_2025.toLocaleString()}</span>.
-                </p>
-                <p className="text-gray-600 mt-2 leading-relaxed">
-                  Total TFSA contribution room since 2009: <span className="font-bold text-[#305399]">${constants.TFSA_TOTAL_ROOM_2025.toLocaleString()}</span>
+                  The maximum TFSA contribution for 2025 is <span className="font-bold text-[#305399]">${constants.MAX_CONTRIBUTION_2025.toLocaleString()}</span>. 
+                  Total contribution room since 2009: <span className="font-bold text-[#305399]">${constants.TOTAL_TFSA_ROOM.toLocaleString()}</span>
                 </p>
               </div>
               <div>
                 <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
                   <TrendingUp className="mr-2 text-[#305399]" size={24} />
-                  Investment Growth
+                  Tax-Free Growth
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Your TFSA investments grow tax-free. Historical market returns have averaged 5-7% annually over long periods, but individual results may vary. The tax savings advantage becomes more significant over time.
+                  All investment growth in your TFSA is completely tax-free, and withdrawals can be made at any time without tax consequences. This makes TFSAs ideal for both retirement and shorter-term savings goals.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                  <Settings className="mr-2 text-[#305399]" size={24} />
+                  Flexible Features
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Use sliders for quick adjustments or click the Ã¢Å“ÂÃ¯Â¸Â button for precise manual input. Your settings are automatically saved for future visits.
                 </p>
               </div>
             </div>
@@ -955,9 +1377,12 @@ export const TFSACalculator: React.FC = () => {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              role="dialog"
+              aria-labelledby="email-modal-title"
+              aria-describedby="email-modal-description"
             >
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-2xl font-bold text-gray-800 flex items-center">
+                <h3 id="email-modal-title" className="text-2xl font-bold text-gray-800 flex items-center">
                   <Mail className="mr-2 text-[#305399]" size={24} />
                   Email Results
                 </h3>
@@ -966,17 +1391,23 @@ export const TFSACalculator: React.FC = () => {
                   className="text-gray-400 hover:text-gray-600 transition-colors"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
+                  aria-label="Close email modal"
                 >
                   <X size={24} />
                 </motion.button>
               </div>
 
+              <p id="email-modal-description" className="text-gray-600 mb-4">
+                Get your personalized TFSA calculation results sent to your email.
+              </p>
+
               <form onSubmit={handleSendEmail} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="email-input" className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address
                   </label>
                   <input
+                    id="email-input"
                     type="email"
                     value={userEmail}
                     onChange={handleEmailInputChange}
@@ -988,9 +1419,13 @@ export const TFSACalculator: React.FC = () => {
                     }`}
                     required
                     disabled={isLoading}
+                    aria-describedby={formErrors.email ? 'email-error' : undefined}
+                    aria-invalid={!!formErrors.email}
                   />
                   {formErrors.email && (
                     <motion.p
+                      id="email-error"
+                      role="alert"
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="text-red-600 text-sm mt-1"
@@ -1043,6 +1478,7 @@ export const TFSACalculator: React.FC = () => {
                         ? 'bg-red-50 text-red-700 border-red-200'
                         : 'bg-blue-50 text-blue-700 border-blue-200'
                     }`}
+                    role="alert"
                   >
                     <div className="flex items-start">
                       <div className="flex-shrink-0 mr-2">

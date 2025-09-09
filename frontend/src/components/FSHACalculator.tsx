@@ -14,7 +14,10 @@ import {
   Mail,
   Percent,
   X,
-  AlertCircle
+  AlertCircle,
+  Edit3,
+  Check,
+  Download
 } from "lucide-react";
 import { useCalculatorServices } from '../hooks/useCalculatorServices';
 
@@ -24,7 +27,50 @@ interface FormErrors {
   general?: string;
 }
 
-// Optimized Range Input Component
+interface ValidationStatus {
+  type: 'valid' | 'warning' | 'error';
+  message?: string;
+}
+
+// Educational Tooltip Component
+const EducationalTooltip = React.memo(({ term, definition }: { term: string; definition: string }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return (
+    <div className="relative inline-block">
+      <button 
+        type="button"
+        className="text-blue-600 underline cursor-help inline-flex items-center"
+        onMouseEnter={() => setIsVisible(true)}
+        onMouseLeave={() => setIsVisible(false)}
+        onFocus={() => setIsVisible(true)}
+        onBlur={() => setIsVisible(false)}
+        aria-describedby="tooltip"
+      >
+        {term}
+        <HelpCircle size={12} className="ml-1" />
+      </button>
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div 
+            id="tooltip"
+            role="tooltip"
+            className="absolute bottom-full left-0 mb-2 w-64 p-3 bg-gray-800 text-white text-sm rounded-lg shadow-lg z-50"
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+          >
+            {definition}
+            <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+});
+
+// Enhanced Range Input with Fixed Manual Input
 const OptimizedRangeInput = React.memo(({ 
   label, 
   icon, 
@@ -36,7 +82,10 @@ const OptimizedRangeInput = React.memo(({
   unit = '', 
   additionalInfo = '',
   formatValue,
-  disabled = false
+  disabled = false,
+  allowManualInput = true,
+  validationStatus,
+  educationalContent
 }: {
   label: string;
   icon: React.ReactNode;
@@ -49,9 +98,17 @@ const OptimizedRangeInput = React.memo(({
   additionalInfo?: string;
   formatValue?: (value: number) => string;
   disabled?: boolean;
+  allowManualInput?: boolean;
+  validationStatus?: ValidationStatus;
+  educationalContent?: { term: string; definition: string };
 }) => {
   const sliderRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isManualInput, setIsManualInput] = useState(false);
+  const [inputValue, setInputValue] = useState<string>('');
+  const [inputError, setInputError] = useState<string>('');
+  const inputId = useRef(`input-${Math.random().toString(36).substr(2, 9)}`);
+  const descriptionId = useRef(`desc-${Math.random().toString(36).substr(2, 9)}`);
   
   const progressPercentage = useMemo(() => {
     return ((value - min) / (max - min)) * 100;
@@ -80,6 +137,71 @@ const OptimizedRangeInput = React.memo(({
     setIsDragging(false);
   }, []);
 
+  const toggleManualInput = useCallback(() => {
+    if (isManualInput) {
+      setIsManualInput(false);
+      setInputValue('');
+      setInputError('');
+    } else {
+      setIsManualInput(true);
+      setInputValue(value.toString());
+    }
+  }, [isManualInput, value]);
+
+  const handleManualInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setInputValue(newValue);
+    setInputError('');
+  }, []);
+
+  const handleManualInputSubmit = useCallback(() => {
+    const numValue = parseFloat(inputValue);
+    
+    if (isNaN(numValue)) {
+      setInputError('Please enter a valid number');
+      return;
+    }
+    
+    if (numValue < min || numValue > max) {
+      setInputError(`Value must be between ${min} and ${max}`);
+      return;
+    }
+    
+    onChange(numValue);
+    setInputError('');
+    setIsManualInput(false);
+  }, [inputValue, min, max, onChange]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (isManualInput) {
+        handleManualInputSubmit();
+      } else {
+        toggleManualInput();
+      }
+    } else if (e.key === 'Escape' && isManualInput) {
+      setIsManualInput(false);
+      setInputValue('');
+      setInputError('');
+    }
+  }, [isManualInput, handleManualInputSubmit, toggleManualInput]);
+
+  const getStatusColor = useCallback(() => {
+    if (!validationStatus) return 'border-gray-300 focus:ring-[#305399]/20 focus:border-[#305399]';
+    
+    switch (validationStatus.type) {
+      case 'error':
+        return 'border-red-300 focus:ring-red-500/20 focus:border-red-500';
+      case 'warning':
+        return 'border-yellow-300 focus:ring-yellow-500/20 focus:border-yellow-500';
+      case 'valid':
+        return 'border-green-300 focus:ring-green-500/20 focus:border-green-500';
+      default:
+        return 'border-gray-300 focus:ring-[#305399]/20 focus:border-[#305399]';
+    }
+  }, [validationStatus]);
+
   const displayValue = useMemo(() => {
     return formatValue ? formatValue(value) : `${value}${unit}`;
   }, [value, unit, formatValue]);
@@ -92,62 +214,132 @@ const OptimizedRangeInput = React.memo(({
     >
       <label className="flex items-center text-base lg:text-lg font-semibold text-gray-700">
         {icon}
-        <span className="flex-1">{label}</span>
-        <span className={`font-bold text-[#305399] text-lg ${isDragging ? 'scale-110 transition-transform' : ''}`}>
-          {displayValue}
+        <span className="flex-1">
+          {label}
+          {educationalContent && (
+            <span className="ml-2">
+              <EducationalTooltip 
+                term={educationalContent.term} 
+                definition={educationalContent.definition} 
+              />
+            </span>
+          )}
         </span>
+        <div className="flex items-center space-x-2">
+          {allowManualInput && !disabled && (
+            <motion.button
+              type="button"
+              onClick={toggleManualInput}
+              onKeyDown={handleKeyDown}
+              className={`p-2 rounded-lg transition-all duration-200 ${
+                isManualInput 
+                  ? 'bg-[#305399] text-white shadow-md' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-[#305399]'
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              title={isManualInput ? 'Switch to slider' : 'Enter manually'}
+              aria-label={isManualInput ? 'Switch to slider input' : 'Switch to manual input'}
+            >
+              {isManualInput ? <Check size={16} /> : <Edit3 size={16} />}
+            </motion.button>
+          )}
+          {isManualInput ? (
+            <div className="flex flex-col items-end">
+              <input
+                id={inputId.current}
+                type="number"
+                value={inputValue}
+                onChange={handleManualInputChange}
+                onBlur={handleManualInputSubmit}
+                onKeyDown={handleKeyDown}
+                min={min}
+                max={max}
+                step={step}
+                className={`w-28 px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 transition-all ${
+                  inputError 
+                    ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                    : getStatusColor()
+                }`}
+                autoFocus
+                placeholder={`${min}-${max}`}
+                aria-describedby={inputError ? `${inputId.current}-error` : descriptionId.current}
+                aria-invalid={!!inputError}
+              />
+              {inputError && (
+                <motion.p
+                  id={`${inputId.current}-error`}
+                  role="alert"
+                  className="text-xs text-red-600 mt-1"
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  {inputError}
+                </motion.p>
+              )}
+            </div>
+          ) : (
+            <span className={`font-bold text-[#305399] text-lg ${isDragging ? 'scale-110 transition-transform' : ''}`}>
+              {displayValue}
+            </span>
+          )}
+        </div>
       </label>
       
-      <div className="relative group">
-        <div className="relative h-4 bg-gray-200 rounded-full overflow-hidden">
+      {!isManualInput && (
+        <div className="relative group">
+          <div className="relative h-4 bg-gray-200 rounded-full overflow-hidden">
+            <div 
+              className="absolute top-0 left-0 h-full bg-gradient-to-r from-[#305399] to-[#4a6fad] rounded-full transition-all duration-150 ease-out"
+              style={{ width: `${progressPercentage}%` }}
+            />
+          </div>
+          
+          <input
+            ref={sliderRef}
+            type="range"
+            min={min}
+            max={max}
+            step={step}
+            value={value}
+            onChange={handleInputChange}
+            onMouseDown={handleInputStart}
+            onMouseUp={handleInputEnd}
+            onTouchStart={handleInputStart}
+            onTouchEnd={handleInputEnd}
+            disabled={disabled}
+            className={`
+              absolute top-0 left-0 w-full h-4 opacity-0 cursor-pointer
+              focus:outline-none focus:ring-0
+              ${disabled ? 'cursor-not-allowed' : 'cursor-grab active:cursor-grabbing'}
+            `}
+            style={{ 
+              WebkitAppearance: 'none',
+              MozAppearance: 'none',
+              appearance: 'none'
+            }}
+          />
+          
           <div 
-            className="absolute top-0 left-0 h-full bg-gradient-to-r from-[#305399] to-[#4a6fad] rounded-full transition-all duration-150 ease-out"
-            style={{ width: `${progressPercentage}%` }}
+            className={`
+              absolute top-1/2 w-6 h-6 bg-white border-3 border-[#305399] rounded-full shadow-lg 
+              transform -translate-y-1/2 -translate-x-1/2 pointer-events-none transition-all duration-150
+              ${isDragging ? 'scale-125 shadow-xl border-[#254080]' : 'group-hover:scale-110'}
+              ${disabled ? 'bg-gray-300 border-gray-400' : ''}
+            `}
+            style={{ left: `${progressPercentage}%` }}
           />
         </div>
-        
-        <input
-          ref={sliderRef}
-          type="range"
-          min={min}
-          max={max}
-          step={step}
-          value={value}
-          onChange={handleInputChange}
-          onMouseDown={handleInputStart}
-          onMouseUp={handleInputEnd}
-          onTouchStart={handleInputStart}
-          onTouchEnd={handleInputEnd}
-          disabled={disabled}
-          className={`
-            absolute top-0 left-0 w-full h-4 opacity-0 cursor-pointer
-            focus:outline-none focus:ring-0
-            ${disabled ? 'cursor-not-allowed' : 'cursor-grab active:cursor-grabbing'}
-          `}
-          style={{ 
-            WebkitAppearance: 'none',
-            MozAppearance: 'none',
-            appearance: 'none'
-          }}
-        />
-        
-        <div 
-          className={`
-            absolute top-1/2 w-6 h-6 bg-white border-3 border-[#305399] rounded-full shadow-lg 
-            transform -translate-y-1/2 -translate-x-1/2 pointer-events-none transition-all duration-150
-            ${isDragging ? 'scale-125 shadow-xl border-[#254080]' : 'group-hover:scale-110'}
-            ${disabled ? 'bg-gray-300 border-gray-400' : ''}
-          `}
-          style={{ left: `${progressPercentage}%` }}
-        />
-      </div>
+      )}
       
-      <div className="flex justify-between text-sm text-gray-500">
-        <span>{formatValue ? formatValue(min) : `${min}${unit}`}</span>
-        <span>{formatValue ? formatValue(max) : `${max}${unit}`}</span>
-      </div>
+      {!isManualInput && (
+        <div className="flex justify-between text-sm text-gray-500">
+          <span>{formatValue ? formatValue(min) : `${min}${unit}`}</span>
+          <span>{formatValue ? formatValue(max) : `${max}${unit}`}</span>
+        </div>
+      )}
       
-      {additionalInfo && (
+      {additionalInfo && !isManualInput && (
         <motion.p 
           className="text-sm text-gray-600 bg-gray-50 p-2 rounded-lg"
           initial={{ opacity: 0, height: 0 }}
@@ -155,6 +347,19 @@ const OptimizedRangeInput = React.memo(({
         >
           {additionalInfo}
         </motion.p>
+      )}
+
+      {validationStatus && validationStatus.type !== 'valid' && (
+        <motion.div
+          className={`flex items-center space-x-2 text-sm ${
+            validationStatus.type === 'error' ? 'text-red-600' : 'text-yellow-600'
+          }`}
+          initial={{ opacity: 0, y: -5 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <AlertCircle size={14} />
+          <span>{validationStatus.message}</span>
+        </motion.div>
       )}
     </motion.div>
   );
@@ -169,13 +374,13 @@ export const FHSACalculator: React.FC = () => {
   const [annualIncome, setAnnualIncome] = useState<number>(60000);
   
   // FHSA specific fields
-  const [purchaseTimeframe, setPurchaseTimeframe] = useState<number>(5); // years from now
+  const [purchaseTimeframe, setPurchaseTimeframe] = useState<number>(5);
   const [existingFHSA, setExistingFHSA] = useState<number>(0);
   const [yearsSinceOpened, setYearsSinceOpened] = useState<number>(0);
   const [previousContributions, setPreviousContributions] = useState<number>(0);
   
   const [frequency, setFrequency] = useState<string>('Monthly');
-  const [contributionAmount, setContributionAmount] = useState<number>(300);
+  const [contributionAmount, setContributionAmount] = useState<number>(200);
   const [oneTimeContribution, setOneTimeContribution] = useState<'Yes' | 'No'>('No');
   const [oneTimeAmount, setOneTimeAmount] = useState<number>(0);
 
@@ -205,7 +410,7 @@ export const FHSACalculator: React.FC = () => {
     FHSA_MAX_YEARS: 15,
     MIN_ROI: 3,
     MAX_ROI: 30,
-    AVERAGE_TAX_RATE: 0.25 // 25% average tax rate for deduction benefit
+    AVERAGE_TAX_RATE: 0.25
   }), []);
 
   const frequencyOptions = useMemo(() => [
@@ -238,7 +443,7 @@ export const FHSACalculator: React.FC = () => {
     return frequencyOptions.find(opt => opt.value === frequency)?.periods || 12;
   }, [frequency, frequencyOptions]);
 
-  // FHSA calculation with proper tax benefits
+  // CORRECTED FHSA calculation with accurate compound interest formula
   useEffect(() => {
     const calculateResults = () => {
       if (purchaseTimeframe <= 0) {
@@ -254,8 +459,8 @@ export const FHSACalculator: React.FC = () => {
 
       const periodsPerYear = getPeriodsPerYear();
       const totalPeriods = purchaseTimeframe * periodsPerYear;
-      const returnRate = customROI / 100;
-      const periodRate = returnRate / periodsPerYear;
+      const annualRate = customROI / 100;
+      const periodRate = annualRate / periodsPerYear;
 
       // Calculate actual contributions considering limits
       const annualContributions = contributionAmount * periodsPerYear;
@@ -266,13 +471,13 @@ export const FHSACalculator: React.FC = () => {
       // Initial amount including existing FHSA and one-time contribution
       const initialAmount = existingFHSA + (oneTimeContribution === 'Yes' ? Math.min(oneTimeAmount, contributionRoom.thisYear) : 0);
       
-      // Future Value calculation with compound growth
+      // CORRECTED: Use start-of-period deposits for accurate growth calculation
       let futureValue = initialAmount;
       let totalContributionsMade = initialAmount;
 
-      // Compound growth calculation period by period
       for (let i = 0; i < totalPeriods; i++) {
-        futureValue = futureValue * (1 + periodRate) + actualPeriodicContributions;
+        futureValue += actualPeriodicContributions;  // Add contribution first (start-of-period)
+        futureValue *= (1 + periodRate);  // Then compound
         totalContributionsMade += actualPeriodicContributions;
       }
 
@@ -281,7 +486,7 @@ export const FHSACalculator: React.FC = () => {
       if (lifetimeUsed > constants.FHSA_LIFETIME_LIMIT) {
         const excessContributions = lifetimeUsed - constants.FHSA_LIFETIME_LIMIT;
         totalContributionsMade -= excessContributions;
-        futureValue -= excessContributions * Math.pow(1 + periodRate, totalPeriods / 2); // Approximate adjustment
+        futureValue -= excessContributions * Math.pow(1 + periodRate, totalPeriods / 2);
       }
 
       const totalGrowthAmount = futureValue - totalContributionsMade;
@@ -403,6 +608,69 @@ export const FHSACalculator: React.FC = () => {
     }
   }, [validateForm, totalSaved, totalContributions, totalGrowth, customROI, taxSavings, availableContributionRoom, eligibility, ownedHome, currentAge, annualIncome, purchaseTimeframe, existingFHSA, yearsSinceOpened, previousContributions, frequency, contributionAmount, oneTimeContribution, oneTimeAmount, postalCode, userEmail, sendEmail, emailStatus.type]);
 
+  // PDF Export functionality
+  const exportToPDF = useCallback(() => {
+    const printContent = `
+      FHSA Calculation Results
+      
+      Personal Information:
+      - Current Age: ${currentAge} years
+      - Annual Income: ${formatCurrency(annualIncome)}
+      - Previously Owned Home: ${ownedHome}
+      - Postal Code: ${postalCode || 'Not provided'}
+      
+      Investment Parameters:
+      - Home Purchase Timeframe: ${purchaseTimeframe} years
+      - Expected Annual Return: ${customROI}%
+      
+      FHSA Details:
+      - Current FHSA Balance: ${formatCurrency(existingFHSA)}
+      - Previous Total Contributions: ${formatCurrency(previousContributions)}
+      - Regular Contribution Amount: ${formatCurrency(contributionAmount)} ${frequency.toLowerCase()}
+      - One-time Contribution: ${oneTimeContribution === 'Yes' ? formatCurrency(oneTimeAmount) : 'None'}
+      
+      Results:
+      - Total FHSA at Purchase Time: ${formatCurrency(totalSaved)}
+      - Your Total Contributions: ${formatCurrency(totalContributions)}
+      - Investment Growth: ${formatCurrency(totalGrowth)}
+      - Tax Deduction Benefit: ${formatCurrency(taxSavings)}
+      - Available Contribution Room: ${formatCurrency(availableContributionRoom)}
+      
+      FHSA Limits (2025):
+      - Annual Contribution Limit: ${formatCurrency(constants.FHSA_ANNUAL_LIMIT)}
+      - Lifetime Contribution Limit: ${formatCurrency(constants.FHSA_LIFETIME_LIMIT)}
+      - Remaining Lifetime Room: ${formatCurrency(constants.FHSA_LIFETIME_LIMIT - previousContributions - existingFHSA)}
+      
+      Generated on: ${new Date().toLocaleDateString()}
+      
+      Disclaimer: This calculation is for informational purposes only. 
+      FHSA rules are complex - consult a financial advisor for personalized advice.
+    `;
+    
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>FHSA Calculation Results</title>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; }
+              h1 { color: #305399; border-bottom: 2px solid #305399; padding-bottom: 10px; }
+              .section { margin-bottom: 20px; }
+              .highlight { color: #305399; font-weight: bold; }
+            </style>
+          </head>
+          <body>
+            <h1>First Home Savings Account (FHSA) Calculator Results</h1>
+            <pre style="white-space: pre-wrap;">${printContent}</pre>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.print();
+    }
+  }, [currentAge, annualIncome, ownedHome, postalCode, purchaseTimeframe, customROI, existingFHSA, previousContributions, contributionAmount, frequency, oneTimeContribution, oneTimeAmount, totalSaved, totalContributions, totalGrowth, taxSavings, availableContributionRoom, constants, formatCurrency]);
+
   // Modal handlers
   const openEmailModal = useCallback(() => {
     setShowEmailModal(true);
@@ -506,6 +774,11 @@ export const FHSACalculator: React.FC = () => {
                   min={18}
                   max={71}
                   unit=" years"
+                  allowManualInput={true}
+                  educationalContent={{
+                    term: "Age eligibility",
+                    definition: "You must be 18-71 years old to open and contribute to an FHSA. You have 15 years from when you first open the account to use it."
+                  }}
                 />
 
                 <OptimizedRangeInput
@@ -518,6 +791,11 @@ export const FHSACalculator: React.FC = () => {
                   step={1000}
                   formatValue={formatCurrency}
                   additionalInfo="Used to calculate tax deduction benefits"
+                  allowManualInput={true}
+                  educationalContent={{
+                    term: "Tax benefits",
+                    definition: "FHSA contributions are tax-deductible, reducing your taxable income. Higher income means bigger tax savings from contributions."
+                  }}
                 />
 
                 {/* Home Ownership Question */}
@@ -592,6 +870,11 @@ export const FHSACalculator: React.FC = () => {
                   max={15}
                   unit=" years"
                   additionalInfo="How many years from now do you plan to buy your first home?"
+                  allowManualInput={true}
+                  educationalContent={{
+                    term: "15-year limit",
+                    definition: "You have up to 15 years from opening your FHSA to use the funds for qualifying home purchases."
+                  }}
                 />
 
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200">
@@ -605,6 +888,11 @@ export const FHSACalculator: React.FC = () => {
                     step={0.1}
                     unit="%"
                     additionalInfo="Conservative: 3-5%, Moderate: 5-8%, Aggressive: 8-12%. Consider your risk tolerance and investment timeline."
+                    allowManualInput={true}
+                    educationalContent={{
+                      term: "Expected returns",
+                      definition: "Your estimated average annual return on investments. Historical stock market returns have averaged 6-10%, but past performance doesn't guarantee future results."
+                    }}
                   />
                 </div>
               </div>
@@ -674,6 +962,11 @@ export const FHSACalculator: React.FC = () => {
                   step={25}
                   formatValue={formatCurrency}
                   additionalInfo={`Annual total: ${formatCurrency(contributionAmount * getPeriodsPerYear())} (Max allowed: ${formatCurrency(constants.FHSA_ANNUAL_LIMIT)})`}
+                  allowManualInput={true}
+                  educationalContent={{
+                    term: "Regular contributions",
+                    definition: "Consistent contributions take advantage of dollar-cost averaging and compound growth. The annual contribution limit is $8,000."
+                  }}
                 />
 
                 {/* Frequency Selection */}
@@ -913,15 +1206,27 @@ export const FHSACalculator: React.FC = () => {
                 <Mail size={20} />
                 Email Results
               </motion.button>
-              
-              <motion.button
-                className="w-full border-2 border-[#305399] text-[#305399] font-bold py-4 rounded-xl hover:bg-[#305399] hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Find Financial Advisor
-                <ArrowRight size={20} />
-              </motion.button>
+
+              <div className="grid grid-cols-2 gap-3">
+                <motion.button
+                  onClick={exportToPDF}
+                  className="px-4 py-3 border-2 border-[#305399] text-[#305399] font-semibold rounded-xl hover:bg-[#305399] hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Download size={16} />
+                  Export
+                </motion.button>
+                
+                <motion.button
+                  className="px-4 py-3 border-2 border-[#305399] text-[#305399] font-semibold rounded-xl hover:bg-[#305399] hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Users size={16} />
+                  Advisor
+                </motion.button>
+              </div>
             </div>
 
             {/* Enhanced Disclaimer */}

@@ -24,6 +24,7 @@ import FSHACalculator from './components/FSHACalculator';
 import RESPCalculator from './components/RESPCalculator';
 import SavingsRetirementCalculators from './components/SavingsRetirementCalculators';
 import LifeTermInsuranceQuote from './components/LifeTermInsuranceQuote';
+import ComingSoonWrapper from './components/ComingSoonWrapper';
 
 function AppContent() {
   const location = useLocation();
@@ -58,6 +59,7 @@ function AppContent() {
           <Route path="/RESPCalculator" element={<RESPCalculator/>}/>
           <Route path="/SavingsRetirementCalculators" element={<SavingsRetirementCalculators/>}/>
           <Route path="/LifeTermInsuranceQuote" element={<LifeTermInsuranceQuote/>}/>
+          <Route path="/coming-soon" element={<ComingSoonWrapper />}/>
         </Routes>
       </main>
 

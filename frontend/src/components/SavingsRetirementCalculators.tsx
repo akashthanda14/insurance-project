@@ -102,7 +102,7 @@ export const SavingsRetirementCalculators: React.FC = () => {
     hidden: { 
       opacity: 0,
       y: 30,
-      scale: 0.9
+      scale: 1
     },
     visible: {
       opacity: 1,
@@ -116,65 +116,49 @@ export const SavingsRetirementCalculators: React.FC = () => {
     },
     hover: {
       y: -8,
-      scale: 1.02,
+      scale: 1.01,
       transition: { duration: 0.3 }
     }
   };
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 font-['Montserrat']">
-      <div className="container mx-auto px-4 py-8 lg:py-12">
+      <div className="container mx-auto px-4 py-6 lg:py-8">
         {/* Header */}
         <motion.header
-          className="text-center mb-12 lg:mb-16"
+          className="text-center mb-6 lg:mb-8"
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
           <motion.div 
-            className="relative inline-block mb-6"
-            whileHover={{ scale: 1.1 }}
+            className="relative inline-block mb-3"
+            whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
             <div className="absolute inset-0 bg-gradient-to-r from-[#305399] to-[#253A66] rounded-full blur-xl opacity-30 animate-pulse"></div>
-            <div className="relative bg-gradient-to-r from-[#305399] to-[#253A66] p-6 rounded-full shadow-2xl">
-              <Calculator className="text-white" size={40} />
+            <div className="relative bg-gradient-to-r from-[#305399] to-[#253A66] p-3 rounded-full shadow-2xl">
+              <Calculator className="text-white" size={24} />
             </div>
           </motion.div>
           
           <motion.h1 
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#305399] to-[#253A66] leading-tight mb-4"
-            initial={{ opacity: 0, scale: 0.8 }}
+            className="text-2xl md:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#305399] to-[#253A66] leading-tight mb-2"
+            initial={{ opacity: 0, scale: 1 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.6 }}
           >
-            Savings & Retirement
+            Canadian Savings Calculators
           </motion.h1>
           
           <motion.p 
-            className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-6"
+            className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto mb-3"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
           >
-            Plan your financial future with our comprehensive Canadian savings and retirement calculators
+            Calculate RRSP, TFSA, FHSA & RESP with 2025 limits
           </motion.p>
-
-          <motion.div
-            className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg max-w-4xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
-          >
-            <div className="flex items-center justify-center mb-3">
-              <Shield className="text-blue-600 mr-3" size={24} />
-              <h3 className="text-lg font-bold text-gray-800">Canadian Tax-Advantaged Accounts</h3>
-            </div>
-            <p className="text-gray-700 leading-relaxed">
-              Maximize your savings with Canada's registered accounts. Each calculator uses current 2025 contribution limits, 
-              tax rates, and government benefits to give you accurate projections for your financial goals.
-            </p>
-          </motion.div>
         </motion.header>
 
         {/* Calculator Cards Grid */}
@@ -221,8 +205,8 @@ export const SavingsRetirementCalculators: React.FC = () => {
                   {/* Animated Background Effect */}
                   <motion.div
                     className={`absolute inset-0 bg-gradient-to-r ${option.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
-                    initial={{ scale: 0 }}
-                    whileHover={{ scale: 1.1 }}
+                    initial={{ scale: 1 }}
+                    whileHover={{ scale: 1.05 }}
                   />
 
                   <div className="relative p-8 lg:p-10 h-full flex flex-col">
@@ -230,7 +214,7 @@ export const SavingsRetirementCalculators: React.FC = () => {
                     <motion.div
                       className="flex items-center justify-between mb-6"
                       animate={{
-                        scale: isHovered ? 1.05 : 1
+                        scale: isHovered ? 1.01 : 1
                       }}
                       transition={{ duration: 0.3 }}
                     >
@@ -309,7 +293,7 @@ export const SavingsRetirementCalculators: React.FC = () => {
                       }`}
                       animate={{ 
                         y: isHovered ? -3 : 0,
-                        scale: isSelected ? 0.95 : 1
+                        scale: isSelected ? 0.98 : 1
                       }}
                       transition={{ duration: 0.2 }}
                     >
@@ -348,34 +332,34 @@ export const SavingsRetirementCalculators: React.FC = () => {
 
         {/* Additional Information */}
         <motion.div
-          className="mt-16 text-center"
+          className="mt-12 text-center"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2, duration: 0.6 }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200">
-              <DollarSign className="text-green-500 mx-auto mb-3" size={32} />
-              <h3 className="font-bold text-gray-800 mb-2">2025 Contribution Limits</h3>
-              <p className="text-sm text-gray-600">Updated with current year limits and tax benefits</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-gray-200">
+              <DollarSign className="text-green-500 mx-auto mb-2" size={28} />
+              <h3 className="font-bold text-gray-800 mb-1 text-sm">2025 Contribution Limits</h3>
+              <p className="text-xs text-gray-600">Updated with current year limits and tax benefits</p>
             </div>
             
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200">
-              <Shield className="text-blue-500 mx-auto mb-3" size={32} />
-              <h3 className="font-bold text-gray-800 mb-2">Government Benefits</h3>
-              <p className="text-sm text-gray-600">Includes grants, tax deductions, and incentives</p>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-gray-200">
+              <Shield className="text-blue-500 mx-auto mb-2" size={28} />
+              <h3 className="font-bold text-gray-800 mb-1 text-sm">Government Benefits</h3>
+              <p className="text-xs text-gray-600">Includes grants, tax deductions, and incentives</p>
             </div>
             
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200">
-              <Calculator className="text-purple-500 mx-auto mb-3" size={32} />
-              <h3 className="font-bold text-gray-800 mb-2">Accurate Projections</h3>
-              <p className="text-sm text-gray-600">Professional-grade calculations for planning</p>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-gray-200">
+              <Calculator className="text-purple-500 mx-auto mb-2" size={28} />
+              <h3 className="font-bold text-gray-800 mb-1 text-sm">Accurate Projections</h3>
+              <p className="text-xs text-gray-600">Professional-grade calculations for planning</p>
             </div>
           </div>
 
           <motion.div
-            className="mt-8"
-            whileHover={{ scale: 1.02 }}
+            className="mt-6"
+            whileHover={{ scale: 1.01 }}
           >
             <a 
               href="#" 
